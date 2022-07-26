@@ -1,6 +1,7 @@
 package com.yhl.gj.service.impl;
 
 import com.yhl.gj.commons.base.Response;
+import com.yhl.gj.commons.constant.CallPyModel;
 import com.yhl.gj.component.CallWarningProgramTask;
 import com.yhl.gj.component.PyLogProcessComponent;
 import com.yhl.gj.config.pyconfig.PyCmdParamConfig;
@@ -9,11 +10,11 @@ import com.yhl.gj.dto.ParamRequest;
 import com.yhl.gj.dto.UserFaceParamRequest;
 import com.yhl.gj.service.CallWarningService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -28,18 +29,27 @@ public class CallWarningServiceImpl implements CallWarningService {
     private PyLogProcessComponent pyLogProcessComponent;
     @Resource
     private PyCmdParamConfig pyCmdParamConfig;
+    @Resource
+    private org.springframework.core.io.Resource pyWork;
 
     @Override
-    public Response call(ParamRequest request) {
+    public Response call(ParamRequest request)  {
+        try {
         if (request instanceof DataDriverParamRequest) {
             log.info("dataDriver");
             log.info(request.toString());
 
-            CallWarningProgramTask callWarningProgramTask = new CallWarningProgramTask(buildCmd(request), pyLogProcessComponent);
+            CallWarningProgramTask callWarningProgramTask = null;
+
+                callWarningProgramTask = new CallWarningProgramTask(buildCmd(request), pyLogProcessComponent,pyWork.getFile(), CallPyModel.DATA_DRIVER);
+
             executorService.submit(callWarningProgramTask);
         } else if (request instanceof UserFaceParamRequest) {
             log.info("userFace");
             log.info(request.toString());
+        }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }

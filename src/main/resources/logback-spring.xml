@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false" scan="true" scanPeriod="1 seconds">
-    <property name="FILE_NAME" value="display-service"/>
+    <property name="FILE_NAME" value="gj-service"/>
     <property name="LOG_HOME" value="data/logs/${FILE_NAME}"/>
     <!--定义日志文件大小 超过这个大小会压缩归档 -->
     <property name="MAX_FILE_SIZE" value="100MB"/>

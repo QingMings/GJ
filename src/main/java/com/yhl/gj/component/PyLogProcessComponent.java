@@ -24,13 +24,13 @@ public class PyLogProcessComponent {
 //
 //        }
         if (!m.find()){
+            log.error(pyLog);
             return;
         }
         String logType = m.group(1);
         String logTime = m.group(2);
         String logDetails = m.group(3);
-
-        switch (logType){
+        switch (StrUtil.trim(logType)){
             case PyLogType.PROCESS:
                 log.info("{}--{}",logType,logDetails);
                 break;

@@ -16,7 +16,8 @@ spring:
   datasource:
     druid:
       driver-class-name: com.oscar.Driver
-      url: jdbc:oscar://www.qingmings.cn:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+#      url: jdbc:oscar://www.qingmings.cn:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+      url: jdbc:oscar://127.0.0.1:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
       username: SYSDBA
       password: szoscar55
       # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
@@ -85,8 +86,11 @@ mybatis-plus:
 
 # python 程序相关配置
 pyScript:
+  # 脚本工作目录
+  pyWorkDir: warningProgram/core
 #  path: warningProgram/core/sum.py
-  path: warningProgram/core/warning_main.py
+  # 主脚本
+  path: warning_main.py
 pyConfig:
   warning_gates_path: warningProgram/core/param/G20210101_warning_gates.json
   c_lib_param_path: warningProgram/core/settings/c_lib_param.json
@@ -96,4 +100,4 @@ pyCmd:
   param_list: python3,-u,${pyScript.path}
 #日志正则匹配
 pyLog:
-  regex_pattern: '\[(.+)    @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\] (.+)'
+  regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\] (.+)'
