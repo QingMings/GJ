@@ -2,6 +2,7 @@ package com.yhl.gj.component;
 
 import cn.hutool.core.util.StrUtil;
 import com.yhl.gj.commons.constant.PyLogType;
+import com.yhl.gj.service.LogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,8 @@ public class PyLogProcessComponent {
 
     @Resource
     private Pattern pyLogRegexPattern;
+    @Resource
+    private LogService logService;
 
     public void pythonPrintProcess(String pyLog){
         Matcher m = pyLogRegexPattern.matcher(pyLog);
