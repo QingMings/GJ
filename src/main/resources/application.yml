@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: local
+
+server:
+  servlet:
+    session:
+      cookie:
+        name: display_token
