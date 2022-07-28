@@ -51,7 +51,7 @@ public class CallWarningServiceImpl implements CallWarningService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return Response.buildSucc();
     }
 
     private String[] buildCmd(ParamRequest request) {

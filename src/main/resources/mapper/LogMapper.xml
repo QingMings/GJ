@@ -4,15 +4,15 @@
   <resultMap id="BaseResultMap" type="com.yhl.gj.model.Log">
     <!--@mbg.generated-->
     <!--@Table SYSDBA.GJ_LOG-->
-    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <id column="ID" jdbcType="BIGINT" property="id" />
     <result column="TRACK_ID" jdbcType="VARCHAR" property="trackId" />
     <result column="ORDER_TYPE" jdbcType="VARCHAR" property="orderType" />
     <result column="LOG_TYPE" jdbcType="VARCHAR" property="logType" />
-    <result column="LOG_TIME" jdbcType="TIMESTAMP" property="logTime" />
     <result column="LOG_DETAIL" jdbcType="LONGVARCHAR" property="logDetail" />
+    <result column="LOG_TIME" jdbcType="TIMESTAMP" property="logTime" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    ID, TRACK_ID, ORDER_TYPE, LOG_TYPE, LOG_TIME, LOG_DETAIL
+    ID, TRACK_ID, ORDER_TYPE, LOG_TYPE, LOG_DETAIL, LOG_TIME
   </sql>
 </mapper>

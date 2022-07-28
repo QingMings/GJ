@@ -2,11 +2,9 @@ package com.yhl.gj.controller;
 
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.dto.DataDriverParamRequest;
-import com.yhl.gj.dto.ParamRequest;
 import com.yhl.gj.dto.UserFaceParamRequest;
 import com.yhl.gj.service.CallWarningService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

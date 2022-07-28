@@ -16,12 +16,14 @@ public class CallWarningProgramTask extends Thread {
     private final String[] cmdArray;
     private final PyLogProcessComponent logProcessComponent;
     private final File workDir;
+    private final String model;
 
     public CallWarningProgramTask(String[] cmdArray, PyLogProcessComponent logProcessComponent, File workDir,String model) {
         super("call-warning-thread");
         this.cmdArray = cmdArray;
         this.logProcessComponent = logProcessComponent;
         this.workDir = workDir;
+        this.model = model;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class CallWarningProgramTask extends Thread {
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String line;
             while ((line = in.readLine()) != null) {
-                logProcessComponent.pythonPrintProcess(line);
+                logProcessComponent.pythonPrintProcess(line,model);
             }
             in.close();
             proc.waitFor();
