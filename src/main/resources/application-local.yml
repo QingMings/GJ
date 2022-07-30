@@ -17,9 +17,11 @@ spring:
     druid:
       driver-class-name: com.oscar.Driver
 #      url: jdbc:oscar://www.qingmings.cn:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
-      url: jdbc:oscar://127.0.0.1:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
-      username: SYSDBA
-      password: szoscar55
+      url: jdbc:oscar://192.168.0.103:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+#      username: SYSDBA
+      username: DSUSER
+#      password: szoscar55
+      password: 123456
       # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
       filters: stat
       # 配置初始化大小、最小、最大 (通常来说，只需要修改initialSize、minIdle、maxActive)
@@ -35,10 +37,10 @@ spring:
       # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
       connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
       validation-query: 'SELECT 1 FROM dual'
-  #  quartz:
+#  quartz:
 #    job-store-type: jdbc #数据库方式
 #    jdbc:
-#      initialize-schema: never #不初始化表结构
+#      initialize-schema: always #不初始化表结构
 #    properties:
 #      org:
 #        quartz:
@@ -82,13 +84,17 @@ mybatis-plus:
     banner: off
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# mybatis 分页插件
+pagehelper:
+  auto-dialect: true
+
+
 
 
 # python 程序相关配置
 pyScript:
   # 脚本工作目录
   pyWorkDir: warningProgram/core
-#  path: warningProgram/core/sum.py
   # 主脚本
   path: warning_main.py
 pyConfig:
@@ -101,3 +107,29 @@ pyCmd:
 #日志正则匹配
 pyLog:
   regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\] (.+)'
+
+
+
+
+#=================task相关配置===============
+task:
+  enableResume: false                         # 程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
+  finishedFileFlag: "end.txt"                 # 文件夹内任务结束标志，扫描到该文件，则结束任务
+  period: 3000                                # 任务运行时间间隔，单位毫秒
+
+orderRunParamSavePath: warningProgram/historyRunParam
+# 输入文件后缀配置
+suffixFilter:
+  # 主卫星输入文件后缀
+  satelliteFile: sat
+  # 目标轨道数据文件后缀
+  targetOrbit: obt
+  # 目标雷达轨道文件后缀
+  targetRadar: rae
+  # 目标激光数据文件后缀
+  targetLaser: las
+  # 观测质量评估
+  obs_GTW: GTW
+  obs_EPH: txt
+
+

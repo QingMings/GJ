@@ -16,6 +16,12 @@ public class CallWarningProgramController {
     @Autowired
     private CallWarningService callWarningService;
 
+    /**
+     * 数据驱动模式，传入订单所依赖文件的磁盘路径
+     * 程序根据磁盘路径生成订单数据。
+     * @param request
+     * @return
+     */
     @PostMapping("/warning/1")
     public Response dataDriver(@RequestBody @Valid DataDriverParamRequest request){
         return callWarningService.call(request);
@@ -24,4 +30,6 @@ public class CallWarningProgramController {
     public Response userFace(@RequestBody @Valid UserFaceParamRequest request){
         return callWarningService.call(request);
     }
+
+
 }

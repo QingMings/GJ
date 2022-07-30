@@ -14,7 +14,7 @@ import lombok.Data;
  * 日志记录表
  */
 @Data
-@TableName(value = "SYSDBA.GJ_LOG")
+@TableName(value = "HZGJ.GJ_LOG")
 public class Log {
     @TableId(value = "ID", type = IdType.AUTO)
     private Long id;

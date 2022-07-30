@@ -3,7 +3,7 @@
 <mapper namespace="com.yhl.gj.mapper.TestMapper">
   <resultMap id="BaseResultMap" type="com.yhl.gj.model.Test">
     <!--@mbg.generated-->
-    <!--@Table SYSDBA.GJ_TEST-->
+    <!--@Table HZGJ.GJ_TEST-->
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="EMAIL" jdbcType="VARCHAR" property="email" />

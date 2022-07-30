@@ -25,4 +25,13 @@ public interface Constants {
 
 
     Integer IS_CORRECT =1 ;
+    String TASK_FINISHED_FILE_FLAG="";
+    Integer RUNNING=1;
+    Integer FINISHED=0;
+    Integer DEFAULT_CONFIG=1;
+
+    String PATH_SATELLITE="pathSatellite";
+    String TARGET_ORBITS="targetOrbits";
+    String TARGET_RADARS="targetRadars";
+    String TARGET_LASERS="targetLasers";
 }

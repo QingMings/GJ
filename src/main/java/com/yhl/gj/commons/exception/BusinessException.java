@@ -10,10 +10,10 @@ public class BusinessException extends RuntimeException implements Serializable 
 
     private static final long serialVersionUID = 1L;
 
-    private String errorCode;
+    private Integer errorCode;
     private String errorMsg;
 
-    public BusinessException(String errorCode, String errorMsg) {
+    public BusinessException(Integer errorCode, String errorMsg) {
         super(errorMsg);
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
@@ -25,11 +25,11 @@ public class BusinessException extends RuntimeException implements Serializable 
         this.errorMsg = error.getResultMessage();
     }
 
-    public String getErrorCode() {
+    public Integer getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(Integer errorCode) {
         this.errorCode = errorCode;
     }
 

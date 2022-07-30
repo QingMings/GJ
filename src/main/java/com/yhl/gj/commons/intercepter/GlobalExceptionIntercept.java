@@ -32,8 +32,8 @@ public class GlobalExceptionIntercept {
 //		sendExceptionMessage(ex,requestUrl);
 		Response<Object> omsResponse = new Response<Object>();
 		omsResponse.setSuccess(Constants.FAIL);
-		omsResponse.setErrorMessage(ex.getMessage());
-		omsResponse.setErrorCode(ex.getErrorCode());
+		omsResponse.setMessage(ex.getMessage());
+		omsResponse.setCode(ex.getErrorCode());
 		log.error("异常", ex);
 		return new ResponseEntity<>(omsResponse, HttpStatus.OK);
 	}
@@ -51,8 +51,8 @@ public class GlobalExceptionIntercept {
         log.error("errorMessage={}",errorMessage);
 		Response<Object> response = new Response<>();
 		response.setSuccess(Constants.FAIL);
-		response.setErrorMessage(errorMessage);
-		response.setErrorCode(ErrorEnum.PARAM_ERROR.getErrorCode());
+		response.setMessage(errorMessage);
+		response.setCode(ErrorEnum.PARAM_ERROR.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
@@ -69,8 +69,8 @@ public class GlobalExceptionIntercept {
 		log.error("请求地址[{}]，异常信息[{}]", requestUrl, ex.getMessage());
 		Response<Object> omsResponse = new Response<>();
 		omsResponse.setSuccess(Constants.FAIL);
-		omsResponse.setErrorMessage(ex.getMessage());
-		omsResponse.setErrorCode(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+		omsResponse.setMessage(ex.getMessage());
+		omsResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		ex.printStackTrace();
 		return new ResponseEntity<>(omsResponse, HttpStatus.OK);
 	}
@@ -86,8 +86,8 @@ public class GlobalExceptionIntercept {
 		log.error("系统异常：errorMessage={}",ex);
 		Response<Object> response = new Response<>();
 		response.setSuccess(Constants.FAIL);
-		response.setErrorMessage(ErrorEnum.SYS_ERROR.getErrorMsg());
-		response.setErrorCode(ErrorEnum.SYS_ERROR.getErrorCode());
+		response.setMessage(ErrorEnum.SYS_ERROR.getErrorMsg());
+		response.setCode(ErrorEnum.SYS_ERROR.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	@ExceptionHandler(TokenInvalidException.class)
@@ -96,8 +96,8 @@ public class GlobalExceptionIntercept {
 		log.error("token 无效 异常 ={}",ex);
 		Response<Object> response = new Response<>();
 		response.setSuccess(Constants.FAIL);
-		response.setErrorMessage(ex.getErrorMsg());
-		response.setErrorCode(ex.getErrorCode());
+		response.setMessage(ex.getErrorMsg());
+		response.setCode(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
@@ -120,8 +120,8 @@ public class GlobalExceptionIntercept {
 		if (CollectionUtils.isNotEmpty(fieldErrors)) {
 			fieldErrors.forEach(item -> sb.append(item.getDefaultMessage() + " "));
 		}
-		omsResponse.setErrorMessage(sb.toString());
-		omsResponse.setErrorCode(ErrorEnum.PARAM_ERROR.getErrorCode());
+		omsResponse.setMessage(sb.toString());
+		omsResponse.setCode(ErrorEnum.PARAM_ERROR.getErrorCode());
 
 		log.error("参数或者实体类异常", ex);
 		return new ResponseEntity<>(omsResponse, HttpStatus.OK);

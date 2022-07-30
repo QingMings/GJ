@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName(value = "SYSDBA.GJ_TEST")
+@TableName(value = "HZGJ.GJ_TEST")
 public class Test {
     @TableId(value = "ID", type = IdType.ASSIGN_UUID)
     private String id;

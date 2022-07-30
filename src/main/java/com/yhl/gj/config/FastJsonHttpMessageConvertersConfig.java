@@ -18,8 +18,12 @@ public class FastJsonHttpMessageConvertersConfig {
         SerializerFeature WriteNullStringAsEmpty = SerializerFeature.WriteNullStringAsEmpty;
         SerializerFeature WriteNullNumberAsZero = SerializerFeature.WriteNullNumberAsZero;
         SerializerFeature WriteNullListAsEmpty = SerializerFeature.WriteNullListAsEmpty;
-        fastJsonConfig.setSerializerFeatures(writeMapNullValue, WriteNullStringAsEmpty,
-                WriteNullNumberAsZero, WriteNullListAsEmpty);
+        SerializerFeature WriteDateUseDateFormat = SerializerFeature.WriteDateUseDateFormat;
+        fastJsonConfig.setSerializerFeatures(writeMapNullValue,
+                WriteNullStringAsEmpty,
+//                WriteNullNumberAsZero,
+                WriteDateUseDateFormat,
+                WriteNullListAsEmpty);
         return fastJsonConfig;
     }
 

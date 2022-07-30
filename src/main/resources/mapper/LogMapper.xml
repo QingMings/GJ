@@ -3,7 +3,7 @@
 <mapper namespace="com.yhl.gj.mapper.LogMapper">
   <resultMap id="BaseResultMap" type="com.yhl.gj.model.Log">
     <!--@mbg.generated-->
-    <!--@Table SYSDBA.GJ_LOG-->
+    <!--@Table HZGJ.GJ_LOG-->
     <id column="ID" jdbcType="BIGINT" property="id" />
     <result column="TRACK_ID" jdbcType="VARCHAR" property="trackId" />
     <result column="ORDER_TYPE" jdbcType="VARCHAR" property="orderType" />

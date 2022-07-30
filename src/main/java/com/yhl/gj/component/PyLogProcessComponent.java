@@ -41,7 +41,7 @@ public class PyLogProcessComponent {
         Log logInfo = new Log();
         logInfo.setOrderType(model);
         logInfo.setLogDetail(logDetails);
-        LocalDateTime localDateTime = DateUtil.parseLocalDateTime(logTime, "yyyy-MM-dd HH:mm:ss.SSSS-SS");
+        LocalDateTime localDateTime = DateUtil.parseLocalDateTime(logTime, "yyyy-MM-dd HH:mm:ss.SSSSSS");
         ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
         Instant instant = zonedDateTime.toInstant();;
         Date date = Date.from(instant);
@@ -49,7 +49,7 @@ public class PyLogProcessComponent {
         System.out.println(logTime);
 
 //        logInfo.setLogTime(date);
-        System.out.println(DateUtil.format(logInfo.getLogTime(), "yyyy-MM-dd HH:mm:ss.SSSS-SS"));
+        System.out.println(DateUtil.format(logInfo.getLogTime(), "yyyy-MM-dd HH:mm:ss.SSSSSS"));
         logInfo.setLogType(logType);
         logInfo.setTrackId("100");
         logService.save(logInfo);

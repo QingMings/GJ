@@ -26,11 +26,11 @@ public class Response<T> implements Serializable {
     /**
      * 错误码
      */
-    private String errorCode;
+    private Integer code;
     /**
      * 错误描述
      */
-    private String errorMessage;
+    private String message;
     /**
      * 数据id 操作记录查询条件
      */
@@ -43,23 +43,23 @@ public class Response<T> implements Serializable {
 
     public Response(HttpStatus httpStatus) {
         this.setSuccess(false);
-        this.setErrorCode(String.valueOf(httpStatus.value()));
-        this.setErrorMessage(httpStatus.getReasonPhrase());
+        this.setCode(httpStatus.value());
+        this.setMessage(httpStatus.getReasonPhrase());
     }
 
 
     public Response(CommonError commonError) {
         this.setSuccess(false);
-        this.setErrorCode(String.valueOf(commonError.getCode()));
-        this.setErrorMessage(commonError.getMessage());
+        this.setCode(commonError.getCode());
+        this.setMessage(commonError.getMessage());
     }
 
 
 
     public Response(BindingResult bindingResult) {
         this.setSuccess(false);
-        this.setErrorCode("500");
-        this.setErrorMessage(bindingResult.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList()).toString());
+        this.setCode(500);
+        this.setMessage(bindingResult.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList()).toString());
     }
 
 
@@ -72,23 +72,23 @@ public class Response<T> implements Serializable {
         this.data = data;
     }
 
-    public Response(String resultCode, String resultMessage) {
+    public Response(Integer resultCode, String resultMessage) {
         this(false);
-        this.errorCode = resultCode;
-        this.errorMessage = resultMessage;
+        this.code = resultCode;
+        this.message = resultMessage;
     }
 
     private Response(ResultEnum resultCode, T body) {
         this.setSuccess(true);
-        this.setErrorCode(resultCode.getResultCode());
-        this.setErrorMessage(resultCode.getResultMessage());
+        this.setCode(resultCode.getResultCode());
+        this.setMessage(resultCode.getResultMessage());
         this.data = body;
     }
 
     private Response(ResultEnum resultCode) {
         this.setSuccess(false);
-        this.setErrorCode(resultCode.getResultCode());
-        this.setErrorMessage(resultCode.getResultMessage());
+        this.setCode(resultCode.getResultCode());
+        this.setMessage(resultCode.getResultMessage());
     }
 
     public Response(T data) {
@@ -102,17 +102,17 @@ public class Response<T> implements Serializable {
     public static <T> Response<T> buildSuccByDataId(String result) {
         Response<T> tResponse = new Response<T>();
         tResponse.setSuccess(true);
-        tResponse.setErrorCode(ResultEnum.SUCCESS.getResultCode());
-        tResponse.setErrorMessage(ResultEnum.SUCCESS.getResultMessage());
+        tResponse.setCode(ResultEnum.SUCCESS.getResultCode());
+        tResponse.setMessage(ResultEnum.SUCCESS.getResultMessage());
         tResponse.setDataId(result);
         return tResponse;
     }
 
-    public static <T> Response<T> buildSucc(String code, String message) {
+    public static <T> Response<T> buildSucc(Integer code, String message) {
         Response<T> response = new Response<T>();
         response.setSuccess(true);
-        response.setErrorCode(code);
-        response.setErrorMessage(message);
+        response.setCode(code);
+        response.setMessage(message);
         return response;
     }
 
@@ -120,7 +120,7 @@ public class Response<T> implements Serializable {
         return new Response<T>(ResultEnum.SUCCESS, null);
     }
 
-    public static <T> Response<T> buildFail(String code, String message) {
+    public static <T> Response<T> buildFail(Integer code, String message) {
         return new Response<T>(code, message);
     }
 

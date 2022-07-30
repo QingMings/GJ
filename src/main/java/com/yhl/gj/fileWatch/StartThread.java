@@ -26,8 +26,8 @@ public class StartThread implements DisposableBean,Runnable {
     public StartThread() {
         this.thread = new Thread(this);
         this.thread.setDaemon(true);
-        this.thread.start();
-        System.out.print("线程启动");
+//        this.thread.start();
+//        System.out.print("线程启动");
     }
     static List<String> paths = Arrays.asList("E:/data1","E:/data2");
     @Override

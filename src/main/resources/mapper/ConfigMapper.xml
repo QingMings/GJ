@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhl.gj.mapper.ConfigMapper">
+  <resultMap id="BaseResultMap" type="com.yhl.gj.model.Config">
+    <!--@mbg.generated-->
+    <!--@Table HZGJ.GJ_CONFIG-->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="CONFIG_NAME" jdbcType="VARCHAR" property="configName" />
+    <result column="CONFIG" jdbcType="LONGVARCHAR" property="config" />
+    <result column="TASK_ID" jdbcType="BIGINT" property="taskId" />
+    <result column="DETAIL_ID" jdbcType="BIGINT" property="detailId" />
+    <result column="IS_DEFAULT" jdbcType="INTEGER" property="isDefault" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    ID, CONFIG_NAME, CONFIG, TASK_ID, DETAIL_ID, IS_DEFAULT
+  </sql>
+</mapper>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhl.gj.mapper.TaskDetailsMapper">
+    <resultMap id="BaseResultMap" type="com.yhl.gj.model.TaskDetails">
+        <!--@mbg.generated-->
+        <!--@Table HZGJ.GJ_TASK_DETAILS-->
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="TASK_ID" jdbcType="BIGINT" property="taskId"/>
+        <result column="ORDER_PATH" jdbcType="LONGVARCHAR" property="orderPath"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="TASK_NAME" jdbcType="VARCHAR" property="taskName"/>
+        <result column="WARN_LEVEL" jdbcType="INTEGER" property="warnLevel"/>
+        <result column="MENACE_SOURCE" jdbcType="VARCHAR" property="menaceSource"/>
+        <result column="TASK_TYPE" jdbcType="INTEGER" property="taskType"/>
+        <result column="RUN_PARAMS" jdbcType="LONGVARCHAR" property="runParams"/>
+        <result column="TARGET_DETAILS" jdbcType="VARCHAR" property="targetDetails"/>
+        <result column="STRATEGY" jdbcType="LONGVARCHAR" property="strategy"/>
+    </resultMap>
+    <resultMap id="BaseResultMapForTaskDetailsVO" type="com.yhl.gj.vo.TaskDetailsVO">
+        <!--@mbg.generated-->
+        <!--@Table HZGJ.GJ_TASK_DETAILS-->
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="TASK_ID" jdbcType="BIGINT" property="taskId"/>
+        <result column="ORDER_PATH" jdbcType="LONGVARCHAR" property="orderPath"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="TASK_NAME" jdbcType="VARCHAR" property="taskName"/>
+        <result column="WARN_LEVEL" jdbcType="INTEGER" property="warnLevel"/>
+        <result column="MENACE_SOURCE" jdbcType="VARCHAR" property="menaceSource"/>
+        <result column="TASK_TYPE" jdbcType="INTEGER" property="taskType"/>
+        <!--    <result column="RUN_PARAMS" jdbcType="LONGVARCHAR" property="runParams" />-->
+        <!--    <result column="TARGET_DETAILS" jdbcType="VARCHAR" property="targetDetails" />-->
+            <result column="STRATEGY" jdbcType="LONGVARCHAR" property="strategyStr" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        ID,
+        TASK_ID,
+        ORDER_PATH,
+        CREATE_TIME,
+        TASK_NAME,
+        WARN_LEVEL,
+        MENACE_SOURCE,
+        TASK_TYPE,
+        RUN_PARAMS,
+        TARGET_DETAILS,
+        STRATEGY
+    </sql>
+
+    <select id="queryListTaskDetailByTaskIds" resultType="com.yhl.gj.dto.LastTaskDetailsDTO">
+        select max(GTD.ID)          as id,
+               GTD.TASK_ID          as taskId,
+               max(GTD.CREATE_TIME) as createTime
+        from HZGJ.GJ_TASK_DETAILS GTD
+        <where>
+            GTD.TASK_ID in
+            <foreach collection="taskIds" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+            group by GTD.TASK_ID
+        </where>
+    </select>
+
+    <select id="queryTaskDetailsByTaskId" resultType="com.yhl.gj.vo.TaskDetailsVO">
+        select ID,
+               TASK_ID,
+               ORDER_PATH,
+               CREATE_TIME,
+               TASK_NAME,
+               WARN_LEVEL,
+               MENACE_SOURCE,
+               TASK_TYPE
+        from HZGJ.GJ_TASK_DETAILS
+        <where>
+            TASK_ID = #{request.taskId}
+            <if test="request.warningLevel != null and request.warningLevel.size() != 0">
+                and (
+                <foreach collection="request.warningLevel" index="index" item="item" separator="or">
+                    WARN_LEVEL = #{item,jdbcType=VARCHAR}
+                </foreach>
+                )
+            </if>
+            <if test="request.taskType != null and request.taskType.size() != 0">
+                and (
+                <foreach collection="request.taskType" index="index" item="item" separator="or">
+                    TASK_TYPE = #{item,jdbcType=VARCHAR}
+                </foreach>
+                )
+            </if>
+            order by CREATE_TIME DESC
+        </where>
+    </select>
+</mapper>

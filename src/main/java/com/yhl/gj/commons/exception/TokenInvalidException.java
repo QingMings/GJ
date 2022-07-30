@@ -6,28 +6,28 @@ import java.io.Serializable;
 
 public class TokenInvalidException extends RuntimeException implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String errorCode;
+    private Integer errorCode;
     private String errorMsg;
 
-    public TokenInvalidException(String errorCode, String errorMsg) {
+    public TokenInvalidException(Integer errorCode, String errorMsg) {
         super(errorMsg);
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
     }
 
     public TokenInvalidException(HttpStatus httpStatus){
-        this(String.valueOf(httpStatus.value()),httpStatus.getReasonPhrase());
+        this(httpStatus.value(),httpStatus.getReasonPhrase());
     }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
 
-    public String getErrorCode() {
+    public Integer getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(Integer errorCode) {
         this.errorCode = errorCode;
     }
 

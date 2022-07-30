@@ -2,22 +2,22 @@ package com.yhl.gj.commons.enums;
 
 public enum ErrorEnum {
 
-    SYS_ERROR("500", "系统异常"),
+    SYS_ERROR(500, "系统异常"),
 
-    PARAM_ERROR("1000","参数错误" ),
+    PARAM_ERROR(1000,"参数错误" ),
             ;
 
 
-    private final String errorCode;
+    private final Integer errorCode;
     private final String errorMsg;
 
-    ErrorEnum(String errorCode, String errorMsg){
+    ErrorEnum(Integer errorCode, String errorMsg){
         this.errorCode=errorCode;
         this.errorMsg=errorMsg;
     }
 
 
-    public String getErrorCode() {
+    public Integer getErrorCode() {
         return errorCode;
     }
 
@@ -25,9 +25,9 @@ public enum ErrorEnum {
         return errorMsg;
     }
 
-    public static ErrorEnum findByCode(String code){
+    public static ErrorEnum findByCode(Integer code){
         for (ErrorEnum value : ErrorEnum.values()) {
-            if(value.getErrorCode().equalsIgnoreCase(code)){
+            if(value.getErrorCode().equals(code)){
                 return value;
             }
         }
