@@ -16,5 +16,7 @@ public interface TaskDetailsService extends IService<TaskDetails> {
     Response queryTaskDetailsByTaskId(TaskDetailsQueryRequest request);
 
     Response showTaskDetailRunParamsAndResult(Long detailId);
+
+    TaskDetails findLastTaskDetails(Long id);
 }
 

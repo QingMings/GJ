@@ -1,10 +1,10 @@
 package com.yhl.gj.component;
 
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.yhl.gj.commons.constant.PyLogType;
 import com.yhl.gj.model.Log;
+import com.yhl.gj.service.CallWarningService;
 import com.yhl.gj.service.LogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,6 +22,9 @@ public class PyLogProcessComponent {
     private Pattern pyLogRegexPattern;
     @Resource
     private LogService logService;
+
+    @Resource
+    private CallWarningService callWarningService;
 
     public void pythonPrintProcess(String pyLog,String model){
         Matcher m = pyLogRegexPattern.matcher(pyLog);
@@ -55,7 +58,7 @@ public class PyLogProcessComponent {
         logService.save(logInfo);
 
         switch (StrUtil.trim(logType)){
-            case PyLogType.PROCESS:
+            case PyLogType.PROGRESS:
                 log.info("{}--{}",logType,logDetails);
                 break;
             case PyLogType.RESULT:

@@ -1,12 +1,8 @@
 package com.yhl.gj;
 
-import cn.hutool.core.date.DateUtil;
-import com.yhl.gj.fileWatch.StartThread;
 import com.yhl.gj.model.Log;
-import com.yhl.gj.service.FileListenerService;
 import com.yhl.gj.service.LogService;
 import com.yhl.gj.service.TestService;
-import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,10 +15,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 class GjApplicationTests {
@@ -74,14 +67,4 @@ class GjApplicationTests {
         logService.save(logInfo);
     }
 
-    @Resource
-    private FileListenerService fileListenerService;
-    @Test
-     void testCommonIoWatchFile() throws InterruptedException {
-        Map<String, FileAlterationMonitor> runingPool = StartThread.runingPool;
-        fileListenerService.startListener(runingPool,"E:\\data3");
-
-
-        TimeUnit.SECONDS.sleep(30000);
-     }
 }

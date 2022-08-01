@@ -15,4 +15,6 @@ public interface TaskDetailsMapper extends BaseMapper<TaskDetails> {
     List<LastTaskDetailsDTO> queryListTaskDetailByTaskIds(@Param("taskIds") List<Long> taskIds);
 
     List<TaskDetailsVO> queryTaskDetailsByTaskId(@Param("request") TaskDetailsQueryRequest request);
+
+    TaskDetails selectLastTaskDetails(@Param("id") Long id);
 }

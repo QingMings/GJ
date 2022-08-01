@@ -34,4 +34,10 @@ public interface Constants {
     String TARGET_ORBITS="targetOrbits";
     String TARGET_RADARS="targetRadars";
     String TARGET_LASERS="targetLasers";
+
+
+    String LEAP = "LEAP";
+    String EOP = "EOP";
+    String SWD = "SWD";
+    String ERR = "ERR";
 }

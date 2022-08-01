@@ -32,7 +32,7 @@ public class Log {
     private String orderType;
 
     /**
-     * 日志类型 Progress、Result
+     * 日志类型 PROGRESS、Result
      */
     @TableField(value = "LOG_TYPE")
     private String logType;

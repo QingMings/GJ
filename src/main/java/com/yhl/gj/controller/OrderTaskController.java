@@ -1,12 +1,14 @@
 package com.yhl.gj.controller;
 
 import com.yhl.gj.commons.base.Response;
+import com.yhl.gj.dto.CustomParam;
 import com.yhl.gj.param.ChooseDetailRequest;
 import com.yhl.gj.param.TaskDetailsQueryRequest;
 import com.yhl.gj.param.TaskQueryRequest;
 import com.yhl.gj.service.TaskDetailsService;
 import com.yhl.gj.service.TaskService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -48,5 +50,13 @@ public class OrderTaskController {
     @GetMapping("/showRunParamsAndResult/{detailId}")
     private Response showTaskDetailRunParamsAndResult(@PathVariable("detailId") Long detailId){
         return taskDetailsService.showTaskDetailRunParamsAndResult(detailId);
+    }
+    @PostMapping("/toRetryTaskUseCustomParam/{taskId}")
+    private Response toRetryTaskUseCustomParam(@PathVariable("taskId") Long taskId, @RequestBody CustomParam param){
+        return taskService.reTryTaskUseCustomParam(taskId,param);
+    }
+    @GetMapping("/listDirAndFile/{type}")
+    private Response listDirAndFiles(@PathVariable("type") String type){
+        return taskService.listDirAndFiles(type);
     }
 }

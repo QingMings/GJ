@@ -47,7 +47,17 @@ public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskD
      */
     @Override
     public Response showTaskDetailRunParamsAndResult(Long detailId) {
-        return null;
+            TaskDetails taskDetails = getById(detailId);
+        // todo 这里还需处理py程序生成的数据，看是读取转json还是怎么弄
+        return Response.buildSucc();
+    }
+
+    /**
+     * 根据任务ID，查找最后一次的任务详情
+     */
+    @Override
+    public TaskDetails findLastTaskDetails(Long id) {
+        return baseMapper.selectLastTaskDetails(id);
     }
 }
 

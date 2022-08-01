@@ -3,10 +3,18 @@ package com.yhl.gj.task;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.extra.spring.SpringUtil;
+import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.model.Task;
+import com.yhl.gj.model.TaskDetails;
+import com.yhl.gj.service.CallWarningService;
 import com.yhl.gj.service.TaskDetailsService;
 import com.yhl.gj.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.lang.reflect.Field;
 import java.nio.file.Paths;
@@ -20,6 +28,7 @@ import java.util.TimerTask;
 @Slf4j
 public class ResumeTaskTimerTask extends TimerTask {
 
+    private final CallWarningService callWarningService;
     // 需要恢复的任务
     private Task task;
 
@@ -31,48 +40,41 @@ public class ResumeTaskTimerTask extends TimerTask {
     public ResumeTaskTimerTask(Task task,
                                TaskService taskService,
                                TaskDetailsService detailsService,
-                               String taskFinishedFileFlag) {
+                               String taskFinishedFileFlag,
+                               CallWarningService callWarningService) {
         this.task = task;
         this.taskService = taskService;
         this.detailsService = detailsService;
         this.taskFinishedFileFlag = taskFinishedFileFlag;
+        this.callWarningService = callWarningService;
     }
 
-    public ResumeTaskTimerTask() {
-    }
 
+
+    /**
+     * 执行任务
+     * 手动开启事务，出错回滚
+     */
     @Override
     public void run() {
-
         log.info("task:{} is running at {}", task.getId(), DateUtil.now());
+        Response response = callWarningService.executeTask(task,null);
+        if (response.isSuccess()){
+            log.info("task: {} is running success",task.getId());
+        }else {
+            log.info("task: {} is running fail,message:",response.getMessage());
+        }
 
-
-
-        checkTaskFinished();
     }
 
+    private TaskDetails findLastTaskDetails(){
+      return detailsService.findLastTaskDetails(task.getId());
+    }
     private String taskNameBuild(Long taskId, Long taskDetailsId) {
         return "任务" + taskId + "-告警" + taskDetailsId;
     }
 
-    /**
-     * 检查是否
-     */
-    private void checkTaskFinished(){
-        boolean checkTaskFinishedFlag = FileUtil.exist(Paths.get(task.getOrderPath()).resolve(taskFinishedFileFlag).toFile());
-        if (checkTaskFinishedFlag){
-            // 1. 标记数据库中task 状态 为FINISHED
-            String taskId = String.valueOf(task.getId());
-            Timer taskTimer = ResumeTaskShared.getResumeTaskTimerMap().get(taskId);
-            if(ObjectUtil.isNotNull(taskTimer)){
-                // 2.停止Timer
-                taskTimer.cancel();
-                // 3. 从map中移除taskId
-                ResumeTaskShared.getResumeTaskTimerMap().remove(taskId);
-                log.info("task:{} is finished",taskId);
-            }
-        }
-    }
+
 
     public void setPeriod(long period) {
         Date now = new Date();

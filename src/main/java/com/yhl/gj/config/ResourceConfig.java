@@ -1,9 +1,11 @@
 package com.yhl.gj.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -41,5 +43,22 @@ public class ResourceConfig implements WebMvcConfigurer {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(0,new ByteArrayHttpMessageConverter());
+    }
+
+    @Value("${paramDirConfig.paramLEAP_Path}")
+    private String paramLEAP_Path;
+    @Value("${paramDirConfig.paramEOP_Path}")
+    private String paramEOP_Path;
+    @Value("${paramDirConfig.paramSWD_Path}")
+    private String paramSWD_Path;
+    @Value("${paramDirConfig.paramERR_Path}")
+    private String paramERR_Path;
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/param/LEAP/**").addResourceLocations("file:"+paramLEAP_Path);
+        registry.addResourceHandler("/param/EOP/**").addResourceLocations("file:"+paramEOP_Path);
+        registry.addResourceHandler("/param/SWT/**").addResourceLocations("file:"+paramSWD_Path);
+        registry.addResourceHandler("/param/ERR/**").addResourceLocations("file:"+paramERR_Path);
     }
 }
