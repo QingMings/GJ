@@ -1,19 +1,17 @@
 package com.yhl.gj.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.dto.LastTaskDetailsDTO;
+import com.yhl.gj.mapper.TaskDetailsMapper;
+import com.yhl.gj.model.TaskDetails;
 import com.yhl.gj.param.TaskDetailsQueryRequest;
+import com.yhl.gj.service.TaskDetailsService;
 import com.yhl.gj.vo.TaskDetailsVO;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yhl.gj.model.TaskDetails;
-import com.yhl.gj.mapper.TaskDetailsMapper;
-import com.yhl.gj.service.TaskDetailsService;
 
 @Service
 public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskDetails> implements TaskDetailsService {
@@ -46,8 +44,8 @@ public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskD
      * 查看任务详情的运行参数和运行结果数据
      */
     @Override
-    public Response showTaskDetailRunParamsAndResult(Long detailId) {
-            TaskDetails taskDetails = getById(detailId);
+    public Response<Integer> showTaskDetailRunParamsAndResult(Long detailId) {
+        TaskDetails taskDetails = getById(detailId);
         // todo 这里还需处理py程序生成的数据，看是读取转json还是怎么弄
         return Response.buildSucc();
     }

@@ -10,12 +10,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Paths;
 @Slf4j
 @Component
 public class OrderRunParamConfig {
-    @Value("${orderRunParamSavePath}")
+    @Value("${task.orderRunParamSavePath}")
     private String orderRunParamSavePath;
 
 

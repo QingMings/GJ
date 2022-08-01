@@ -1,4 +1,4 @@
-package com.yhl.gj.dto;
+package com.yhl.gj.param;
 
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
  * 数据驱动模式
  */
 @Data
-public class DataDriverParamRequest implements ParamRequest{
+public class OrderRequest {
 
     /**
      * 磁盘路径

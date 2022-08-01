@@ -20,4 +20,9 @@ public class PyInputFileSuffixConfig {
     // 激光输入文件后缀
     @Value("${suffixFilter.targetLaser}")
     private String targetLaser;
+    @Value("${suffixFilter.obs_GTW}")
+    private String obs_GTW;
+    @Value("${suffixFilter.obs_EPH}")
+    private String obs_EPH;
+
 }

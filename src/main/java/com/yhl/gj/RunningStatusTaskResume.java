@@ -3,7 +3,6 @@ package com.yhl.gj;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.yhl.gj.model.Task;
 import com.yhl.gj.service.CallWarningService;
 import com.yhl.gj.service.TaskDetailsService;
@@ -44,8 +43,6 @@ public class RunningStatusTaskResume implements CommandLineRunner {
     @Resource
     private CallWarningService callWarningService;
 
-    @Resource
-    private SpringUtil springUtil;
     @Override
     public void run(String... args)  {
         started();
@@ -69,7 +66,7 @@ public class RunningStatusTaskResume implements CommandLineRunner {
         needResumeTasks.forEach(t -> {
             Timer resumeTimer = new Timer();
             ResumeTaskShared.getResumeTaskTimerMap().put(String.valueOf(t.getId()),resumeTimer);
-            ResumeTaskTimerTask resumeTaskTimerTask = new ResumeTaskTimerTask(t,taskService,taskDetailsService,taskFinishedFileFlag,callWarningService);
+            ResumeTaskTimerTask resumeTaskTimerTask = new ResumeTaskTimerTask(t, callWarningService);
             resumeTimer.schedule(resumeTaskTimerTask,0, ObjectUtil.defaultIfNull(taskPeriod,3000));
             log.info("task:{} is resumed at {}", t.getId(), DateUtil.now());
         });

@@ -14,8 +14,12 @@ public class PyWorkDirConfig {
 
     @Value("${pyScript.pyWorkDir}")
     private String pyWorkDir;
+
+    /**
+     * py脚本工作目录
+     */
     @Bean
-    public Resource  pyWork() throws MalformedURLException {
+    public Resource pyWorkDir() throws MalformedURLException {
         return new FileUrlResource(pyWorkDir);
     }
 }

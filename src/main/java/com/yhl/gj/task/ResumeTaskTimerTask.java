@@ -1,25 +1,13 @@
 package com.yhl.gj.task;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.model.Task;
-import com.yhl.gj.model.TaskDetails;
 import com.yhl.gj.service.CallWarningService;
-import com.yhl.gj.service.TaskDetailsService;
-import com.yhl.gj.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.lang.reflect.Field;
-import java.nio.file.Paths;
 import java.util.Date;
-import java.util.Timer;
 import java.util.TimerTask;
 
 /**
@@ -32,20 +20,11 @@ public class ResumeTaskTimerTask extends TimerTask {
     // 需要恢复的任务
     private Task task;
 
-    private String taskFinishedFileFlag;
-    private TaskService taskService;
-    private TaskDetailsService detailsService;
 
 
     public ResumeTaskTimerTask(Task task,
-                               TaskService taskService,
-                               TaskDetailsService detailsService,
-                               String taskFinishedFileFlag,
                                CallWarningService callWarningService) {
         this.task = task;
-        this.taskService = taskService;
-        this.detailsService = detailsService;
-        this.taskFinishedFileFlag = taskFinishedFileFlag;
         this.callWarningService = callWarningService;
     }
 
@@ -53,7 +32,7 @@ public class ResumeTaskTimerTask extends TimerTask {
 
     /**
      * 执行任务
-     * 手动开启事务，出错回滚
+     *
      */
     @Override
     public void run() {
@@ -67,9 +46,6 @@ public class ResumeTaskTimerTask extends TimerTask {
 
     }
 
-    private TaskDetails findLastTaskDetails(){
-      return detailsService.findLastTaskDetails(task.getId());
-    }
     private String taskNameBuild(Long taskId, Long taskDetailsId) {
         return "任务" + taskId + "-告警" + taskDetailsId;
     }

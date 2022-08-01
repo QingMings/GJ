@@ -10,7 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,7 +68,7 @@ public class PyLogProcessComponent {
                 log.info("{}--{}",logType,logDetails);
                 break;
             case PyLogType.ERROR:
-                log.error("{}--{}",logType,logDetails);
+//                log.error("{}--{}",logType,logDetails);
                 break;
             default:
                 log.info(logDetails);

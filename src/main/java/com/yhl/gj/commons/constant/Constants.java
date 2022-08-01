@@ -24,20 +24,27 @@ public interface Constants {
     Integer NOT_ROOT = 2;
 
 
-    Integer IS_CORRECT =1 ;
-    String TASK_FINISHED_FILE_FLAG="";
-    Integer RUNNING=1;
-    Integer FINISHED=0;
-    Integer DEFAULT_CONFIG=1;
+    Integer IS_CORRECT = 1;
+    String TASK_FINISHED_FILE_FLAG = "";
+    Integer RUNNING = 1;
+    Integer FINISHED = 0;
+    Integer DEFAULT_CONFIG = 1;
+    // ============ 构建 inputFiles 时候的json key
+    String PATH_SATELLITE = "pathSatellite";
+    String TARGET_ORBITS = "targetOrbits";
+    String TARGET_RADARS = "targetRadars";
+    String TARGET_LASERS = "targetLasers";
+    String OBS_GTW = "obs_GTW";
+    String OBS_EPH = "obs_EPH";
 
-    String PATH_SATELLITE="pathSatellite";
-    String TARGET_ORBITS="targetOrbits";
-    String TARGET_RADARS="targetRadars";
-    String TARGET_LASERS="targetLasers";
 
-
+    // ============ 配置参数路径分类标识 =================
     String LEAP = "LEAP";
     String EOP = "EOP";
     String SWD = "SWD";
     String ERR = "ERR";
+
+    // =========== 默认参数文件名 ======================
+    String DEFAULT_PARAM = "defaultParam.json";
+
 }
