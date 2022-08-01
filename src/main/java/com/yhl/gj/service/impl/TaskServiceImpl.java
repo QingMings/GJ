@@ -17,6 +17,9 @@ import com.yhl.gj.service.TaskDetailsService;
 import com.yhl.gj.param.TaskQueryRequest;
 import com.yhl.gj.vo.TaskVO;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.http.util.Asserts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -56,23 +59,30 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     public Response listDirAndFiles(String type) {
-
+        IOFileFilter txtAndJsonFileFilter = FileFilterUtils.and(FileFileFilter.INSTANCE, FileFilterUtils.or(FileFilterUtils.suffixFileFilter(".txt"), FileFilterUtils.suffixFileFilter(".json")));
+        String path = paramLEAP_Path;
         switch (type) {
 
             case LEAP:
-//                FileUtil.loopFiles()
+                path = paramLEAP_Path;
 
                 break;
             case EOP:
+                path = paramEOP_Path;
                 break;
             case SWD:
+                path = paramSWD_Path;
                 break;
             case ERR:
+                path = paramERR_Path;
                 break;
             default:
+                path = paramLEAP_Path;
                 break;
         }
-        return null;
+
+        List<File> files = FileUtil.loopFiles(path, txtAndJsonFileFilter);
+        return Response.buildSucc(files);
     }
 
     /**

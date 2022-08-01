@@ -1,5 +1,6 @@
 package com.yhl.gj;
 
+import ch.qos.logback.core.rolling.helper.FileFilterUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.tree.TreeUtil;
 import org.apache.commons.io.filefilter.AndFileFilter;
@@ -20,11 +21,12 @@ public class TestFile {
 
         String path = "/Users/shishifanbuxie/FTP/temp";
         AndFileFilter andFileFilter = new AndFileFilter();
-        IOFileFilter and = FileFilterUtils.and(
+        IOFileFilter txtAndJsonFileFilter = FileFilterUtils.and(
                 FileFileFilter.INSTANCE,
-                FileFilterUtils.suffixFileFilter(".txt"));
+                FileFilterUtils.or(FileFilterUtils.suffixFileFilter(".txt"),FileFilterUtils.suffixFileFilter(".json")));
+
         ;
-        List<File> files = FileUtil.loopFiles(path, FileFilterUtils.or(and,FileFilterUtils.suffixFileFilter(".zip")));
+        List<File> files = FileUtil.loopFiles(path, txtAndJsonFileFilter);
         files.forEach(t-> {
             System.out.println(t.getAbsolutePath());
         });
