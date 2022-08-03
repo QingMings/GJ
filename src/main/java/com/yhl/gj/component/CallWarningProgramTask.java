@@ -42,8 +42,8 @@ public class CallWarningProgramTask extends Thread {
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(),encoding));
             String line;
             while ((line = in.readLine()) != null) {
-//                log.info(line);
-                logProcessComponent.pythonPrintProcess(line,model);
+                log.info(line);
+//                logProcessComponent.pythonPrintProcess(line,model);
             }
             in.close();
             proc.waitFor();

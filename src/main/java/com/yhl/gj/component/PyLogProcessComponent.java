@@ -34,6 +34,7 @@ public class PyLogProcessComponent {
     private CallWarningService callWarningService;
 
     public void pythonPrintProcess(String pyLog, String model) {
+        log.info(pyLog);
         Matcher m = pyLogRegexPattern.matcher(pyLog);
         if (!m.find()){
             log.error(pyLog);
@@ -41,7 +42,8 @@ public class PyLogProcessComponent {
         }
         String logType = m.group(1);
         String logTime = m.group(2);
-        String logDetails = m.group(3);
+        String logCode = m.group(3);
+        String logDetails = m.group(4);
         Log logInfo = new Log();
         logInfo.setOrderType(model);
         logInfo.setLogDetail(logDetails);

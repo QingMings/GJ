@@ -126,16 +126,16 @@ pyCmd:
   param_list: python3,-u,${pyScript.path}
 #日志正则匹配(处理)
 pyLog:
-  regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\] (.+)'
+  regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\] \[code=(\d+)\] (.+)'
 
 
 
 
 #=================task相关配置===============
 task:
-  enableResume: false                         # 程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
+  enableResume: true                         # 程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
   finishedFileFlag: "end.txt"                 # 文件夹内任务结束标志，扫描到该文件，则结束任务
-  period: 15000                                # 任务运行时间间隔，单位毫秒
+  period: 60000                                # 任务运行时间间隔，单位毫秒
   orderRunParam:
     savePath: warningProgram/historyRunParam     # 订单运行参数保存路径
     createDirByDay: true                           # 是否按天分文件夹  如果是，则 savePath = warningProgram/historyRunParam/2022-08-01 这种
