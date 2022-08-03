@@ -34,6 +34,7 @@ import com.yhl.gj.util.MyFileFilterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.comparator.NameFileComparator;
+import org.apache.commons.io.filefilter.EmptyFileFilter;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.http.util.Asserts;
@@ -48,6 +49,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -95,7 +98,7 @@ public class CallWarningServiceImpl implements CallWarningService {
      */
     private static JSONObject mappingToJSONObject(Map.Entry<String, Set<String>> entry) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(SAT_ID, entry.getKey());
+        jsonObject.put(SAT_ID, Integer.valueOf(entry.getKey()));
         jsonObject.put(PATHS, entry.getValue());
         return jsonObject;
     }
@@ -122,7 +125,9 @@ public class CallWarningServiceImpl implements CallWarningService {
             try {
                 Asserts.notNull(runParam, "任务运行参数缺失");
                 CallWarningProgramTask callWarningProgramTask =
-                        createCallWarningProgramTask(runParam.getAbsolutePath(), ObjectUtil.isNull(param));
+                        createCallWarningProgramTask(runParam.getAbsolutePath(), String.join("_",
+                                String.valueOf(task.getId()),
+                                String.valueOf(taskDetails.getId())), ObjectUtil.isNull(param));
                 executorService.submit(callWarningProgramTask);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -133,6 +138,7 @@ public class CallWarningServiceImpl implements CallWarningService {
         }
         return Response.buildSuccByDataId(String.valueOf(task.getId()));
     }
+
     /**
      * 检查是否任务文件夹有 结束标志，如果有，
      * 将数据库任务数据标记为结束
@@ -188,8 +194,8 @@ public class CallWarningServiceImpl implements CallWarningService {
      *
      * @param model 运行模式，true 为 数据驱动模式，false是用户传参模式
      */
-    private CallWarningProgramTask createCallWarningProgramTask(String runParamPath, boolean model) throws IOException {
-        return new CallWarningProgramTask(buildCmd(runParamPath), pyLogProcessComponent, pyWork.getFile(), model ? CallPyModel.DATA_DRIVER : CallPyModel.USER_FACE);
+    private CallWarningProgramTask createCallWarningProgramTask(String runParamPath, String trackId, boolean model) throws IOException {
+        return new CallWarningProgramTask(buildCmd(runParamPath), pyLogProcessComponent, pyWork.getFile(), trackId, model ? CallPyModel.DATA_DRIVER : CallPyModel.USER_FACE);
     }
 
     /**
@@ -222,8 +228,15 @@ public class CallWarningServiceImpl implements CallWarningService {
                 "告警" + detailId, DateUtil.format(DateUtil.date(), PURE_DATETIME_FORMAT));
     }
 
+    /**
+     * 设置UTC 时间
+     *
+     * @param configParam
+     */
     private void startUTC(JSONObject configParam) {
-        configParam.put("time_start_utc", DateUtil.format(DateUtil.date(TimeZone.LONG), NORM_DATETIME_MS_PATTERN));
+//        LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("UTC"));
+        LocalDateTime localDateTime = LocalDateTime.of(2020,11,28,00,00,00);
+        configParam.put("time_start_utc", DateUtil.format(localDateTime, NORM_DATETIME_MS_PATTERN));
     }
 
     private String[] buildCmd(String runParamPath) {
@@ -318,29 +331,43 @@ public class CallWarningServiceImpl implements CallWarningService {
     }
 
     /**
+     * 收集路径，只取第一个
+     */
+    private void collectFilePathOnlyOne(JSONObject output, List<File> fileSource, String key) {
+        if (CollectionUtils.isNotEmpty(fileSource)) {
+            output.put(key, fileSource.get(0).getPath());
+
+        }
+    }
+
+    /**
      * 加载任务输入文件路径
      */
     private JSONObject loadOrderFiles(String orderPath, TaskDetails taskDetails) {
         Path path = Paths.get(orderPath);
+        // 过滤空文件
+        IOFileFilter notEmptyFileFilter = EmptyFileFilter.NOT_EMPTY;
+
         IOFileFilter satFileFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getSatelliteFile());
         IOFileFilter targetOrbitFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getTargetOrbit());
         // 过滤雷达文件，根据文件后缀和文件名时间(最近24h)
-        IOFileFilter targetRadarFilter = FileFilterUtils.and(FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getTargetRadar()),
-                MyFileFilterUtil.fileNameAge24hFilter(false));
+        IOFileFilter targetRadarFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getTargetRadar());
+        // 根据文件名中的日期判断近24h小时的文件
+        IOFileFilter fileNameAgeIn24HFilter = MyFileFilterUtil.fileNameAge24hFilter(false);
         IOFileFilter targetLaserFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getTargetLaser());
         IOFileFilter obs_GTW_Filter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getObs_GTW());
         IOFileFilter obs_EPH_Filter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getObs_EPH());
 
-        List<File> satelliteFiles = FileUtil.loopFiles(path.toFile(), satFileFilter);
-        List<File> targetOrbitFiles = FileUtil.loopFiles(path.toFile(), targetOrbitFilter);
-        List<File> targetRadarFiles = FileUtil.loopFiles(path.toFile(), targetRadarFilter);
-        List<File> targetLaserFiles = FileUtil.loopFiles(path.toFile(), targetLaserFilter);
-        List<File> obs_GTW_Files = FileUtil.loopFiles(path.toFile(), obs_GTW_Filter);
-        List<File> obs_EPH_Files = FileUtil.loopFiles(path.toFile(), obs_EPH_Filter);
+        List<File> satelliteFiles = FileUtil.loopFiles(path.toFile(), FileFilterUtils.and(satFileFilter, notEmptyFileFilter));
+        List<File> targetOrbitFiles = FileUtil.loopFiles(path.toFile(), FileFilterUtils.and(targetOrbitFilter, notEmptyFileFilter));
+        List<File> targetRadarFiles = FileUtil.loopFiles(path.toFile(), FileFilterUtils.and(targetRadarFilter, fileNameAgeIn24HFilter, notEmptyFileFilter));
+        List<File> targetLaserFiles = FileUtil.loopFiles(path.toFile(), FileFilterUtils.and(targetLaserFilter, notEmptyFileFilter));
+        List<File> obs_GTW_Files = FileUtil.loopFiles(path.toFile(), FileFilterUtils.and(obs_GTW_Filter, notEmptyFileFilter));
+        List<File> obs_EPH_Files = FileUtil.loopFiles(path.toFile(), FileFilterUtils.and(obs_EPH_Filter, notEmptyFileFilter));
         JSONObject inputFileList = new JSONObject();
         // 收集卫星轨道文件路径(文件名最新的一个)
         findTopOrderByFileNameDesc(inputFileList, satelliteFiles, PATH_SATELLITE);
-        Assert.notNull(inputFileList.getString(PATH_SATELLITE), "没有最新的文件");
+//        Assert.notNull(inputFileList.getString(PATH_SATELLITE), "没有最新的文件");
         // 》》》将解析出的主目标ID更新到数据库中
         updateTaskName(inputFileList.getString(PATH_SATELLITE), taskDetails);
         // 收集目标文件路径
@@ -350,8 +377,8 @@ public class CallWarningServiceImpl implements CallWarningService {
         // 收集目标激光路径
         collectFilePath(inputFileList, targetLaserFiles, TARGET_LASERS);
         // 搜集观测质量评估
-        collectFilePath(inputFileList, obs_GTW_Files, OBS_GTW);
-        collectFilePath(inputFileList, obs_EPH_Files, OBS_EPH);
+        collectFilePathOnlyOne(inputFileList, obs_GTW_Files, OBS_GTW);
+        collectFilePathOnlyOne(inputFileList, obs_EPH_Files, OBS_EPH);
         return inputFileList;
     }
 

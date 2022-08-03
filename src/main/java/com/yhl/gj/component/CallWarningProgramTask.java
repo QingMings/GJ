@@ -1,6 +1,7 @@
 package com.yhl.gj.component;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.system.SystemUtil;
 import com.yhl.gj.config.pyconfig.PyLogRegexConfig;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,11 +18,13 @@ public class CallWarningProgramTask extends Thread {
     private final PyLogProcessComponent logProcessComponent;
     private final File workDir;
     private final String model;
+    private final String logTrackId;
 
-    public CallWarningProgramTask(String[] cmdArray, PyLogProcessComponent logProcessComponent, File workDir,String model) {
+    public CallWarningProgramTask(String[] cmdArray, PyLogProcessComponent logProcessComponent, File workDir,String trackId,String model) {
         super("call-warning-thread");
         this.cmdArray = cmdArray;
         this.logProcessComponent = logProcessComponent;
+        this.logTrackId = trackId;
         this.workDir = workDir;
         this.model = model;
     }
@@ -35,9 +38,11 @@ public class CallWarningProgramTask extends Thread {
             pb.redirectErrorStream(true);
             pb.directory(workDir);
             proc = pb.start();
-            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            String encoding = SystemUtil.getOsInfo().isWindows()? "gbk": "utf-8";
+            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(),encoding));
             String line;
             while ((line = in.readLine()) != null) {
+//                log.info(line);
                 logProcessComponent.pythonPrintProcess(line,model);
             }
             in.close();
