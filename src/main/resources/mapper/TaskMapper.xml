@@ -91,4 +91,10 @@
         set TASK_NAME = #{satelliteName}
         where ID = #{taskId}
     </update>
+
+    <select id="getAllTaskNames" resultType="java.lang.String">
+        select distinct TASK_NAME
+        from HZGJ.GJ_TASK
+        where TASK_NAME is not null
+    </select>
 </mapper>

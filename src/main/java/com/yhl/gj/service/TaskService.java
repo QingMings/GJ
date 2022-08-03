@@ -32,5 +32,7 @@ public interface TaskService extends IService<Task> {
     Response<Integer> checkTaskIsRunningByPath(OrderRequest request);
 
     Integer updateTaskName(String satelliteName, Long taskId);
+
+    Response getAllTaskNames();
 }
 

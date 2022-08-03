@@ -8,3 +8,14 @@
 5、`rabbitmqctl set_permissions -p VHOST myRoot ".*" ".*" ".*"` 为用户设置权限
 
 	到这里，就可以通过 目标ip:15672/ 访问远程 rabbitmq 了
+
+打开新的终端窗口，回到根目录 cd 之后输入 brew install rabbitmq 指令即可进行rabbitmq服务的自动安装。
+
+RabbitMQ安装后的路径为：/usr/local/Cellar/rabbitmq/3.7.12 (版本根据安装版本定)
+RabbitMQ配置文件路径为：/usr/local/etc/rabbitmq/rabbitmq-env.conf
+
+至此安装完成。
+
+2 配置远程访问
+2.1修改节点ip地址配置
+打开RabbitMQ配置文件，将节点ip地址修改为空格

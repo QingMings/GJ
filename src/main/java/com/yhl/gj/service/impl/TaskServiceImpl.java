@@ -65,6 +65,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     }
 
     /**
+     * 获取所有任务名
+     */
+    @Override
+    public Response<List<String>> getAllTaskNames() {
+        List<String> taskNames = baseMapper.getAllTaskNames();
+        return Response.buildSucc(taskNames);
+    }
+
+    /**
      * 检查是否有相同路径的任务在运行状态
      */
     @Override

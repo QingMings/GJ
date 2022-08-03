@@ -11,6 +11,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,12 +35,6 @@ public class PyLogProcessComponent {
 
     public void pythonPrintProcess(String pyLog, String model) {
         Matcher m = pyLogRegexPattern.matcher(pyLog);
-//        String[] logArray = pyLog.split("@");
-//        if (logArray.length!=2){
-//            log.error(pyLog);
-//            return;
-//
-//        }
         if (!m.find()){
             log.error(pyLog);
             return;
@@ -54,11 +49,7 @@ public class PyLogProcessComponent {
         ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
         Instant instant = zonedDateTime.toInstant();;
         Date date = Date.from(instant);
-
-        System.out.println(logTime);
-
-//        logInfo.setLogTime(date);
-        System.out.println(DateUtil.format(logInfo.getLogTime(), "yyyy-MM-dd HH:mm:ss.SSSSSS"));
+        logInfo.setLogTime(new Timestamp(date.getTime()));
         logInfo.setLogType(logType);
         logInfo.setTrackId("100");
         logService.save(logInfo);

@@ -133,7 +133,7 @@ pyLog:
 
 #=================task相关配置===============
 task:
-  enableResume: true                         # 程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
+  enableResume: false                         # 程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
   finishedFileFlag: "end.txt"                 # 文件夹内任务结束标志，扫描到该文件，则结束任务
   period: 15000                                # 任务运行时间间隔，单位毫秒
   orderRunParam:

@@ -80,4 +80,8 @@ public class OrderTaskController {
         return taskService.loadDefaultRunParam();
     }
 
+    @GetMapping("/getAllTaskNames")
+    private Response<List<String>> getAllTaskNames() {
+        return taskService.getAllTaskNames();
+    }
 }

@@ -18,4 +18,6 @@ public interface TaskMapper extends BaseMapper<Task> {
     Integer finishedTask(@Param("id") Long id);
 
     Integer updateTaskName(@Param("satelliteName") String satelliteName, @Param("taskId") Long taskId);
+
+    List<String> getAllTaskNames();
 }
