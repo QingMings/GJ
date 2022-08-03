@@ -107,7 +107,7 @@ public class CallWarningServiceImpl implements CallWarningService {
     @Override
     public Response<Integer> executeTask(Task task, JSONObject param) {
         try {
-            TaskDetails taskDetails = createTaskDetails(task);
+            TaskDetails taskDetails = createTaskDetails(task, ObjectUtil.isNotNull(param));
             JSONObject taskJson = buildOrderId(task.getId(), taskDetails.getId());
             JSONObject inputFilePaths = loadOrderFiles(task.getOrderPath(), taskDetails);
             JSONObject configParam = ObjectUtil.defaultIfNull(param, loadDefaultParams());
@@ -239,8 +239,8 @@ public class CallWarningServiceImpl implements CallWarningService {
         return task;
     }
 
-    private TaskDetails createTaskDetails(Task task) {
-        TaskDetails taskDetails = new TaskDetails(task.getId(), task.getOrderPath(), task.getTaskName());
+    private TaskDetails createTaskDetails(Task task, boolean model) {
+        TaskDetails taskDetails = new TaskDetails(task.getId(), task.getOrderPath(), task.getTaskName(), model ? CallPyModel.DATE_DRIVER_VALUE : CallPyModel.USER_FACE_VALUE);
         detailsService.save(taskDetails);
         return taskDetails;
     }

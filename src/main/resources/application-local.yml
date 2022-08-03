@@ -76,9 +76,9 @@ spring:
     serialization:
       write-dates-as-timestamps: true
   rabbitmq:
-    username: guest
-    password: guest
-    host: localhost
+    username: hzgj
+    password: hzgj123456
+    host: 192.168.43.244
     port: 5672
     virtual-host: hzgj
     listener:

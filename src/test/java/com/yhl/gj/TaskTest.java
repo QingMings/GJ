@@ -29,7 +29,7 @@ public class TaskTest {
     void testInsertTaskDetails() throws InterruptedException {
         for (int i = 0; i < 5; i++) {
             Thread.sleep(2000);
-            TaskDetails taskDetails = new TaskDetails(1L,"/Users/shishifanbuxie/FTP/temp","479055");
+            TaskDetails taskDetails = new TaskDetails(1L, "/Users/shishifanbuxie/FTP/temp", "479055", 1);
             taskDetailsService.save(taskDetails);
         }
 

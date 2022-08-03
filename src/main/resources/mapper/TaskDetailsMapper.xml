@@ -13,7 +13,7 @@
         <result column="MENACE_SOURCE" jdbcType="VARCHAR" property="menaceSource"/>
         <result column="TASK_TYPE" jdbcType="INTEGER" property="taskType"/>
         <result column="RUN_PARAMS" jdbcType="LONGVARCHAR" property="runParams"/>
-        <result column="TARGET_DETAILS" jdbcType="VARCHAR" property="targetDetails"/>
+        <result column="TARGET_DETAILS" jdbcType="LONGVARCHAR" property="targetDetails"/>
         <result column="STRATEGY" jdbcType="LONGVARCHAR" property="strategy"/>
     </resultMap>
     <resultMap id="BaseResultMapForTaskDetailsVO" type="com.yhl.gj.vo.TaskDetailsVO">

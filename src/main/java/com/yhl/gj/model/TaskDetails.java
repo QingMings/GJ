@@ -5,8 +5,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.util.Date;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 任务详情表
@@ -14,11 +15,12 @@ import lombok.Data;
 @Data
 @TableName(value = "HZGJ.GJ_TASK_DETAILS")
 public class TaskDetails {
-    public TaskDetails(Long taskId, String orderPath, String taksName) {
+    public TaskDetails(Long taskId, String orderPath, String taskName, Integer taskType) {
         this.taskId = taskId;
         this.orderPath = orderPath;
         this.createTime = DateUtil.date();
-        this.taskName = taksName;
+        this.taskName = taskName;
+        this.taskType = taskType;
     }
     /**
      * 任务详情表ID
