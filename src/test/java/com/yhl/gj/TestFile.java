@@ -1,10 +1,7 @@
 package com.yhl.gj;
 
-import cn.hutool.core.io.FileUtil;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 public class TestFile {
@@ -24,10 +21,12 @@ public class TestFile {
 //            System.out.println(t.getAbsolutePath());
 //        });
 
-        String name = "defaultParam.json";
-        String content = FileUtil.readUtf8String(name);
-        File file = ResourceUtils.getFile(name);
-        System.out.println(file.getAbsolutePath());
+//        String name = "defaultParam.json";
+//        String content = FileUtil.readUtf8String(name);
+//        File file = ResourceUtils.getFile(name);
+//        System.out.println(file.getAbsolutePath());
+
+        System.out.println("任务132_告警23_20220731135123.json".indexOf("_"));
     }
 
     @Test

@@ -19,7 +19,8 @@ spring:
     druid:
       driver-class-name: com.oscar.Driver
       #      url: jdbc:oscar://www.qingmings.cn:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
-      url: jdbc:oscar://192.168.1.14:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+      #      url: jdbc:oscar://192.168.1.14:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+      url: jdbc:oscar://192.168.43.236:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
       #      username: SYSDBA
       username: DSUSER
       #      password: szoscar55
@@ -74,7 +75,18 @@ spring:
   jackson:
     serialization:
       write-dates-as-timestamps: true
-
+  rabbitmq:
+    username: guest
+    password: guest
+    host: localhost
+    port: 5672
+    virtual-host: hzgj
+    listener:
+      simple:
+        acknowledge-mode: manual
+        concurrency: 5
+        max-concurrency: 10
+        prefetch: 1
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 logging:
@@ -99,9 +111,11 @@ pyScript:
   pyWorkDir: warningProgram/core
   # 主脚本
   path: warning_main.py
+  outputPath: ./output/
 pyConfig:
   warning_gates_path: warningProgram/core/param/G20210101_warning_gates.json
   c_lib_param_path: warningProgram/core/settings/c_lib_param.json
+# 配置参数的存放路径，读取路径下的json和txt文件路径，供前端浏览选择
 paramDirConfig:
   paramLEAP_Path: /Users/shishifanbuxie/FTP/temp
   paramEOP_Path: /Users/shishifanbuxie/FTP/local
@@ -122,11 +136,16 @@ task:
   enableResume: true                         # 程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
   finishedFileFlag: "end.txt"                 # 文件夹内任务结束标志，扫描到该文件，则结束任务
   period: 3000                                # 任务运行时间间隔，单位毫秒
-  orderRunParamSavePath: warningProgram/historyRunParam     # 订单运行参数保存路径
+  orderRunParam:
+    savePath: warningProgram/historyRunParam     # 订单运行参数保存路径
+    createDirByDay: true                           # 是否按天分文件夹  如果是，则 savePath = warningProgram/historyRunParam/2022-08-01 这种
+    createDirByTask: true                       # 是否按任务分文件夹  如果是  则savePath = warningProgram/historyRunParam/任务xx 这种，如果按天也开了，savePath=warningProgram/historyRunParam/2022-08-01/任务xx 这种
   defaultParam: # 默认参数
     flushToDBOnStart: true                   # 程序启动时，是否刷新数据库中的默认配置
-    #    path: config/defaultParam.json            # 默认配置路径
-    path: defaultParam.json            # 默认配置路径
+    #    path: config/defaultParam.json            # 默认配置路径(部署)
+    path: defaultParam.json            # 默认配置路径(开发)
+
+
 # (inputFiles)输入文件后缀配置
 suffixFilter:
   # 主卫星输入文件后缀

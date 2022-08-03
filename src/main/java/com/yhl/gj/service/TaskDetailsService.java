@@ -18,5 +18,7 @@ public interface TaskDetailsService extends IService<TaskDetails> {
     Response<Integer> showTaskDetailRunParamsAndResult(Long detailId);
 
     TaskDetails findLastTaskDetails(Long id);
+
+    Integer updateTaskName(String satelliteName, Long id);
 }
 

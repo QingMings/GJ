@@ -59,6 +59,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     private String paramERR_Path;
 
 
+    @Override
+    public Integer updateTaskName(String satelliteName, Long taskId) {
+        return baseMapper.updateTaskName(satelliteName, taskId);
+    }
+
     /**
      * 检查是否有相同路径的任务在运行状态
      */

@@ -17,4 +17,6 @@ public interface TaskDetailsMapper extends BaseMapper<TaskDetails> {
     List<TaskDetailsVO> queryTaskDetailsByTaskId(@Param("request") TaskDetailsQueryRequest request);
 
     TaskDetails selectLastTaskDetails(@Param("id") Long id);
+
+    Integer updateTaskName(@Param("satelliteName") String satelliteName, @Param("id") Long id);
 }

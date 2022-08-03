@@ -16,4 +16,6 @@ public interface TaskMapper extends BaseMapper<Task> {
     List<Task> queryRunningTasks();
 
     Integer finishedTask(@Param("id") Long id);
+
+    Integer updateTaskName(@Param("satelliteName") String satelliteName, @Param("taskId") Long taskId);
 }

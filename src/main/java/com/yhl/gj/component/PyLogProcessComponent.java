@@ -7,6 +7,7 @@ import com.yhl.gj.model.Log;
 import com.yhl.gj.service.CallWarningService;
 import com.yhl.gj.service.LogService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -17,6 +18,7 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 @Slf4j
 @Component
 public class PyLogProcessComponent {
@@ -25,11 +27,12 @@ public class PyLogProcessComponent {
     private Pattern pyLogRegexPattern;
     @Resource
     private LogService logService;
-
+    @Resource
+    private RabbitTemplate rabbitTemplate;
     @Resource
     private CallWarningService callWarningService;
 
-    public void pythonPrintProcess(String pyLog,String model){
+    public void pythonPrintProcess(String pyLog, String model) {
         Matcher m = pyLogRegexPattern.matcher(pyLog);
 //        String[] logArray = pyLog.split("@");
 //        if (logArray.length!=2){

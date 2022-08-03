@@ -63,10 +63,11 @@
                 GT.MAX_WARN_LEVEL = #{item,jdbcType=VARCHAR}
             </foreach>)
             </if>
-            <if test="param.taskNames != null  and param.taskNames.size()>0">
-                and GT.TASK_NAME IN <foreach collection="param.taskNames" item="item" open="(" separator="," close=")">
-                #{item}
-            </foreach>
+            <if test="param.taskNames != null  and param.taskNames.size() > 0">
+                and GT.TASK_NAME IN
+                <foreach collection="param.taskNames" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
             </if>
         </where>
         order by GT.CREATE_DATE desc
@@ -74,12 +75,20 @@
 
     <select id="queryRunningTasks" resultMap="BaseResultMap">
         select
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         from HZGJ.GJ_TASK
         where TASK_STATUS = 1
     </select>
 
     <select id="finishedTask" resultType="java.lang.Integer">
-        update HZGJ.GJ_TASK set TASK_STATUS = 0 where id = #{id}
+        update HZGJ.GJ_TASK
+        set TASK_STATUS = 0
+        where ID = #{id}
     </select>
+
+    <update id="updateTaskName">
+        update HZGJ.GJ_TASK
+        set TASK_NAME = #{satelliteName}
+        where ID = #{taskId}
+    </update>
 </mapper>

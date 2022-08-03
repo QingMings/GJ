@@ -30,13 +30,15 @@ public interface Constants {
     Integer FINISHED = 0;
     Integer DEFAULT_CONFIG = 1;
     // ============ 构建 inputFiles 时候的json key
-    String PATH_SATELLITE = "pathSatellite";
-    String TARGET_ORBITS = "targetOrbits";
-    String TARGET_RADARS = "targetRadars";
-    String TARGET_LASERS = "targetLasers";
-    String OBS_GTW = "obs_GTW";
-    String OBS_EPH = "obs_EPH";
+    String PATH_SATELLITE = "path_satellite";
+    String TARGET_ORBITS = "path_target_orbit_list";
+    String TARGET_RADARS = "path_target_radar_list";
+    String TARGET_LASERS = "path_target_laser_list";
+    String OBS_GTW = "path_obs_gtw";
+    String OBS_EPH = "path_obs_eph";
 
+    String SAT_ID = "satid";
+    String PATHS = "paths";
 
     // ============ 配置参数路径分类标识 =================
     String LEAP = "LEAP";

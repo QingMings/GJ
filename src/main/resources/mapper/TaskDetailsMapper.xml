@@ -94,6 +94,7 @@
 
     <select id="selectLastTaskDetails" resultMap="BaseResultMap">
         select top 1
+
         <include refid="Base_Column_List"/>
         from HZGJ.GJ_TASK_DETAILS
         <where>
@@ -101,4 +102,10 @@
             order by CREATE_TIME desc
         </where>
     </select>
+
+    <update id="updateTaskName">
+        update HZGJ.GJ_TASK_DETAILS
+        set TASK_NAME = #{satelliteName}
+        where ID = #{id}
+    </update>
 </mapper>

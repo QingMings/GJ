@@ -18,6 +18,7 @@ import com.yhl.gj.component.PyLogProcessComponent;
 import com.yhl.gj.config.pyconfig.OrderRunParamConfig;
 import com.yhl.gj.config.pyconfig.PyCmdParamConfig;
 import com.yhl.gj.config.pyconfig.PyInputFileSuffixConfig;
+import com.yhl.gj.dto.RadarFileDto;
 import com.yhl.gj.model.Config;
 import com.yhl.gj.model.Task;
 import com.yhl.gj.model.TaskDetails;
@@ -29,9 +30,10 @@ import com.yhl.gj.service.TaskService;
 import com.yhl.gj.task.OrderTaskShared;
 import com.yhl.gj.task.OrderTaskTimerTask;
 import com.yhl.gj.task.ResumeTaskShared;
+import com.yhl.gj.util.MyFileFilterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.comparator.LastModifiedFileComparator;
+import org.apache.commons.io.comparator.NameFileComparator;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.http.util.Asserts;
@@ -46,13 +48,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Timer;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
+import static cn.hutool.core.date.DatePattern.NORM_DATETIME_MS_PATTERN;
 import static cn.hutool.core.date.DatePattern.PURE_DATETIME_FORMAT;
 import static com.yhl.gj.commons.constant.Constants.*;
 
@@ -68,6 +70,8 @@ public class CallWarningServiceImpl implements CallWarningService {
     private PyCmdParamConfig pyCmdParamConfig;
     @Resource
     private org.springframework.core.io.Resource pyWork;
+    @Value("${pyScript.outputPath}")
+    private String pyOutputPath;
     @Resource
     private PyInputFileSuffixConfig inputFileSuffixConfig;
     @Resource
@@ -87,31 +91,48 @@ public class CallWarningServiceImpl implements CallWarningService {
     private String defaultParamPath;
 
     /**
+     * lambda 抽方法
+     */
+    private static JSONObject mappingToJSONObject(Map.Entry<String, Set<String>> entry) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(SAT_ID, entry.getKey());
+        jsonObject.put(PATHS, entry.getValue());
+        return jsonObject;
+    }
+
+    /**
      * 执行一次任务生成任务详情(只执行一次)
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Response<Integer> executeTask(Task task, JSONObject param) {
-        TaskDetails taskDetails = createTaskDetails(task);
-        JSONObject inputFilePaths = loadOrderFiles(task.getOrderPath());
-        JSONObject configParam = ObjectUtil.defaultIfNull(param, loadDefaultParams());
-        JSONObject order = new JSONObject();
-        order.put("inputFileList", inputFilePaths);
-        order.put("param", configParam);
-        File runParam = saveRunParamToDBAndDisk(order, taskDetails);
         try {
-            Asserts.notNull(runParam, "任务运行参数缺失");
-            CallWarningProgramTask callWarningProgramTask =
-                    createCallWarningProgramTask(runParam.getAbsolutePath(), ObjectUtil.isNull(param));
-            executorService.submit(callWarningProgramTask);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            TaskDetails taskDetails = createTaskDetails(task);
+            JSONObject taskJson = buildOrderId(task.getId(), taskDetails.getId());
+            JSONObject inputFilePaths = loadOrderFiles(task.getOrderPath(), taskDetails);
+            JSONObject configParam = ObjectUtil.defaultIfNull(param, loadDefaultParams());
+            startUTC(configParam);
+
+            JSONObject order = new JSONObject();
+            order.put("task", taskJson);
+            order.put("input", inputFilePaths);
+            order.put("output", pyOutputPath);
+            order.put("params", configParam);
+            File runParam = saveRunParamToDBAndDisk(order, taskDetails);
+            try {
+                Asserts.notNull(runParam, "任务运行参数缺失");
+                CallWarningProgramTask callWarningProgramTask =
+                        createCallWarningProgramTask(runParam.getAbsolutePath(), ObjectUtil.isNull(param));
+                executorService.submit(callWarningProgramTask);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            checkTaskFinished(task);
+        } catch (Exception e) {
+            Response.buildFail(500, e.getMessage());
         }
-        checkTaskFinished(task);
         return Response.buildSuccByDataId(String.valueOf(task.getId()));
     }
-
-
     /**
      * 检查是否任务文件夹有 结束标志，如果有，
      * 将数据库任务数据标记为结束
@@ -201,6 +222,9 @@ public class CallWarningServiceImpl implements CallWarningService {
                 "告警" + detailId, DateUtil.format(DateUtil.date(), PURE_DATETIME_FORMAT));
     }
 
+    private void startUTC(JSONObject configParam) {
+        configParam.put("time_start_utc", DateUtil.format(DateUtil.date(TimeZone.LONG), NORM_DATETIME_MS_PATTERN));
+    }
 
     private String[] buildCmd(String runParamPath) {
         List<String> cmd = pyCmdParamConfig.getCmd();
@@ -222,36 +246,12 @@ public class CallWarningServiceImpl implements CallWarningService {
     }
 
     /**
-     * 加载任务输入文件路径
+     * 构建订单id
      */
-    private JSONObject loadOrderFiles(String orderPath) {
-        Path path = Paths.get(orderPath);
-        IOFileFilter satFileFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getSatelliteFile());
-        IOFileFilter targetOrbitFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getTargetOrbit());
-        IOFileFilter targetRadarFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getTargetRadar());
-        IOFileFilter targetLaserFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getTargetLaser());
-        IOFileFilter obs_GTW_Filter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getObs_GTW());
-        IOFileFilter obs_EPH_Filter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getObs_EPH());
-
-        List<File> satelliteFiles = FileUtil.loopFiles(path.toFile(), satFileFilter);
-        List<File> targetOrbitFiles = FileUtil.loopFiles(path.toFile(), targetOrbitFilter);
-        List<File> targetRadarFiles = FileUtil.loopFiles(path.toFile(), targetRadarFilter);
-        List<File> targetLaserFiles = FileUtil.loopFiles(path.toFile(), targetLaserFilter);
-        List<File> obs_GTW_Files = FileUtil.loopFiles(path.toFile(), obs_GTW_Filter);
-        List<File> obs_EPH_Files = FileUtil.loopFiles(path.toFile(), obs_EPH_Filter);
-        JSONObject inputFileList = new JSONObject();
-        // 收集卫星轨道文件路径(最新的一个)
-        findLastModifiedFileInPath(inputFileList, satelliteFiles, PATH_SATELLITE);
-        // 收集目标文件路径
-        collectFilePath(inputFileList, targetOrbitFiles, TARGET_ORBITS);
-        // 收集目标雷达路径
-        collectFilePath(inputFileList, targetRadarFiles, TARGET_RADARS);
-        // 收集目标激光路径
-        collectFilePath(inputFileList, targetLaserFiles, TARGET_LASERS);
-        // 搜集观测质量评估
-        collectFilePath(inputFileList, obs_GTW_Files, OBS_GTW);
-        collectFilePath(inputFileList, obs_EPH_Files, OBS_EPH);
-        return inputFileList;
+    private JSONObject buildOrderId(Long mainTaskId, Long detailId) {
+        JSONObject taskJson = new JSONObject();
+        taskJson.put("order_id", String.join("_", "task" + mainTaskId, "gj" + detailId));
+        return taskJson;
     }
 
     /**
@@ -318,12 +318,94 @@ public class CallWarningServiceImpl implements CallWarningService {
     }
 
     /**
-     * 获得同后缀文件中最后修改时间的文件路径
+     * 加载任务输入文件路径
      */
-    private void findLastModifiedFileInPath(JSONObject output, List<File> fileSource, String key) {
+    private JSONObject loadOrderFiles(String orderPath, TaskDetails taskDetails) {
+        Path path = Paths.get(orderPath);
+        IOFileFilter satFileFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getSatelliteFile());
+        IOFileFilter targetOrbitFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getTargetOrbit());
+        // 过滤雷达文件，根据文件后缀和文件名时间(最近24h)
+        IOFileFilter targetRadarFilter = FileFilterUtils.and(FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getTargetRadar()),
+                MyFileFilterUtil.fileNameAge24hFilter(false));
+        IOFileFilter targetLaserFilter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getTargetLaser());
+        IOFileFilter obs_GTW_Filter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getObs_GTW());
+        IOFileFilter obs_EPH_Filter = FileFilterUtils.suffixFileFilter(inputFileSuffixConfig.getObs_EPH());
+
+        List<File> satelliteFiles = FileUtil.loopFiles(path.toFile(), satFileFilter);
+        List<File> targetOrbitFiles = FileUtil.loopFiles(path.toFile(), targetOrbitFilter);
+        List<File> targetRadarFiles = FileUtil.loopFiles(path.toFile(), targetRadarFilter);
+        List<File> targetLaserFiles = FileUtil.loopFiles(path.toFile(), targetLaserFilter);
+        List<File> obs_GTW_Files = FileUtil.loopFiles(path.toFile(), obs_GTW_Filter);
+        List<File> obs_EPH_Files = FileUtil.loopFiles(path.toFile(), obs_EPH_Filter);
+        JSONObject inputFileList = new JSONObject();
+        // 收集卫星轨道文件路径(文件名最新的一个)
+        findTopOrderByFileNameDesc(inputFileList, satelliteFiles, PATH_SATELLITE);
+        Assert.notNull(inputFileList.getString(PATH_SATELLITE), "没有最新的文件");
+        // 》》》将解析出的主目标ID更新到数据库中
+        updateTaskName(inputFileList.getString(PATH_SATELLITE), taskDetails);
+        // 收集目标文件路径
+        collectFilePath(inputFileList, targetOrbitFiles, TARGET_ORBITS);
+        // 收集目标雷达路径(只收集最近24h生成的文件)
+        collectRadarFilePath(inputFileList, targetRadarFiles, TARGET_RADARS);
+        // 收集目标激光路径
+        collectFilePath(inputFileList, targetLaserFiles, TARGET_LASERS);
+        // 搜集观测质量评估
+        collectFilePath(inputFileList, obs_GTW_Files, OBS_GTW);
+        collectFilePath(inputFileList, obs_EPH_Files, OBS_EPH);
+        return inputFileList;
+    }
+
+    /**
+     * 雷达文件需要解析文件名，单独拿出一个方法
+     */
+    private void collectRadarFilePath(JSONObject output, List<File> fileSource, String key) {
         if (CollectionUtils.isNotEmpty(fileSource)) {
-            List<File> sortedFiles = CollectionUtil.sort(fileSource, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
-            output.put(key, sortedFiles.get(0).getPath());
+            JSONArray files = new JSONArray();
+            output.put(key, files);
+            Map<String, Set<String>> resultMap = fileSource.stream().map(this::mappingToRadarFileDto)
+                    .collect(Collectors.groupingBy(RadarFileDto::getName,
+                            Collectors.mapping(RadarFileDto::getPath,
+                                    Collectors.toSet())));
+
+            List<JSONObject> resultList = resultMap.entrySet()
+                    .stream().map(CallWarningServiceImpl::mappingToJSONObject)
+                    .collect(Collectors.toList());
+            files.addAll(resultList);
         }
+    }
+
+    /**
+     * 获得同后缀文件中，文件名中日期最新的 ，返回文件名中的卫星编号
+     */
+    private void findTopOrderByFileNameDesc(JSONObject output, List<File> fileSource, String key) {
+        if (CollectionUtils.isNotEmpty(fileSource)) {
+            List<File> sortedFiles = CollectionUtil.sort(fileSource, NameFileComparator.NAME_REVERSE);
+            File selectedFile = sortedFiles.get(0);
+            output.put(key, selectedFile.getPath());
+        }
+    }
+
+    private void updateTaskName(String path, TaskDetails details) {
+        String fileName = Paths.get(path).getFileName().toString();
+        String satelliteName = getName(fileName);
+        Integer result = taskService.updateTaskName(satelliteName, details.getTaskId());
+        Integer result2 = detailsService.updateTaskName(satelliteName, details.getId());
+    }
+
+    private String getName(String fileName) {
+        if (!fileName.contains("_")) {
+            return "";
+        }
+        int index = fileName.indexOf("_");
+        return fileName.substring(0, index);
+    }
+
+    /**
+     * lambda 抽方法
+     */
+    private RadarFileDto mappingToRadarFileDto(File file) {
+        String name = getName(file.getName());
+        String path = file.getAbsolutePath();
+        return new RadarFileDto(name, path);
     }
 }

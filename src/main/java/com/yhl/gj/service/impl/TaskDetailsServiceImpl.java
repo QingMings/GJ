@@ -57,5 +57,10 @@ public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskD
     public TaskDetails findLastTaskDetails(Long id) {
         return baseMapper.selectLastTaskDetails(id);
     }
+
+    @Override
+    public Integer updateTaskName(String satelliteName, Long id) {
+        return baseMapper.updateTaskName(satelliteName, id);
+    }
 }
 

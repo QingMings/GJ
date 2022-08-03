@@ -1,5 +1,6 @@
 {
-  "gates": {
+  "time_span_days": 9.0,
+  "thresholds": {
     "gate_dr": 50.0E+3,
     "gate_etca": 5.0,
     "gate_dSTW": [
@@ -7,13 +8,13 @@
       50.0E+3,
       50.0E+3
     ],
-    "gate_pc": 1.0E-4
+    "gate_pc": 1.0E-4,
+    "thr_las_ctn_dur": 5000.0,
+    "thr_las_ctn_level_0": 1000.0,
+    "thr_las_ctn_level_1": 4000.0
   },
-  "timeSpan": {
-    "days": 5.0
-  },
-  "param_LEAP": "./param/LEAP.txt",
-  "param_EOP": "./param/EOP-Last5Years.txt",
-  "param_SWD": "./param/SW-Last5Years.txt",
-  "param_ERR": "./param/sys_error/CFG_PROP_ERROR.txt"
+  "path_leap": "./param/LEAP.txt",
+  "path_eop": "./param/EOP-Last5Years.txt",
+  "path_swd": "./param/SW-Last5Years.txt",
+  "path_error": "./param/sys_error/CFG_PROP_ERROR.txt"
 }
