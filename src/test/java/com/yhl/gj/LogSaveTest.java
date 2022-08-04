@@ -3,6 +3,8 @@ package com.yhl.gj;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
 import com.yhl.gj.component.PyLogProcessComponent;
+import com.yhl.gj.model.TaskDetails;
+import com.yhl.gj.service.TaskDetailsService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -25,5 +27,21 @@ public class LogSaveTest {
 //             logProcessComponent.pythonPrintProcess(t, CallPyModel.DATA_DRIVER);
         });
 
+    }
+    @Resource
+    private TaskDetailsService detailsService;
+    @Test
+    public void select(){
+        List<TaskDetails> taskDetails = detailsService.list();
+        taskDetails.forEach(t -> {
+            System.out.println(t);
+        });
+    }
+
+    @Test
+    public void select2()
+    {
+       TaskDetails taskDetails = detailsService.findLastTaskDetails(40L);
+        System.out.println(taskDetails);
     }
 }

@@ -1,19 +1,22 @@
 package com.yhl.gj.model;
 
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
 import java.util.Date;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 任务详情表
  */
 @Data
+@NoArgsConstructor
 @TableName(value = "HZGJ.GJ_TASK_DETAILS")
 public class TaskDetails {
+
     /**
      * 任务详情表ID
      */
@@ -31,12 +34,6 @@ public class TaskDetails {
      */
     @TableField(value = "ORDER_PATH")
     private String orderPath;
-
-    /**
-     * 任务启动时间
-     */
-    @TableField(value = "CREATE_TIME")
-    private Date createTime;
 
     /**
      * 任务名称或者主目标ID
@@ -80,13 +77,17 @@ public class TaskDetails {
     @TableField(value = "STRATEGY")
     private String strategy;
 
+    /**
+     * 创建时间
+     */
+    @TableField(value = "CREATE_TIME")
+    private Date createTime;
+
     public static final String COL_ID = "ID";
 
     public static final String COL_TASK_ID = "TASK_ID";
 
     public static final String COL_ORDER_PATH = "ORDER_PATH";
-
-    public static final String COL_CREATE_TIME = "CREATE_TIME";
 
     public static final String COL_TASK_NAME = "TASK_NAME";
 
@@ -101,4 +102,16 @@ public class TaskDetails {
     public static final String COL_TARGET_DETAILS = "TARGET_DETAILS";
 
     public static final String COL_STRATEGY = "STRATEGY";
+
+    public static final String COL_CREATE_TIME = "CREATE_TIME";
+
+
+
+    public TaskDetails(Long taskId, String orderPath, String taskName, Integer taskType) {
+        this.taskId = taskId;
+        this.orderPath = orderPath;
+        this.createTime = DateUtil.date();
+        this.taskName = taskName;
+        this.taskType = taskType;
+    }
 }

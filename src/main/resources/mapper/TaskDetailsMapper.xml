@@ -7,7 +7,6 @@
     <id column="ID" jdbcType="BIGINT" property="id" />
     <result column="TASK_ID" jdbcType="BIGINT" property="taskId" />
     <result column="ORDER_PATH" jdbcType="LONGVARCHAR" property="orderPath" />
-    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
     <result column="TASK_NAME" jdbcType="VARCHAR" property="taskName" />
     <result column="WARN_LEVEL" jdbcType="INTEGER" property="warnLevel" />
     <result column="MENACE_SOURCE" jdbcType="VARCHAR" property="menaceSource" />
@@ -15,11 +14,12 @@
     <result column="RUN_PARAMS" jdbcType="LONGVARCHAR" property="runParams" />
     <result column="TARGET_DETAILS" jdbcType="LONGVARCHAR" property="targetDetails" />
     <result column="STRATEGY" jdbcType="LONGVARCHAR" property="strategy" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    ID, TASK_ID, ORDER_PATH, CREATE_TIME, TASK_NAME, WARN_LEVEL, MENACE_SOURCE, TASK_TYPE, 
-    RUN_PARAMS, TARGET_DETAILS, STRATEGY
+    ID, TASK_ID, ORDER_PATH, TASK_NAME, WARN_LEVEL, MENACE_SOURCE, TASK_TYPE, RUN_PARAMS, 
+    TARGET_DETAILS, STRATEGY, CREATE_TIME
   </sql>
 
     <select id="queryListTaskDetailByTaskIds" resultType="com.yhl.gj.dto.LastTaskDetailsDTO">
@@ -68,13 +68,12 @@
     </select>
 
     <select id="selectLastTaskDetails" resultMap="BaseResultMap">
-        select top 1
-
-        <include refid="Base_Column_List" />
+        select <include refid="Base_Column_List" />
         from HZGJ.GJ_TASK_DETAILS
         <where>
             TASK_ID = #{id}
             order by CREATE_TIME desc
+            LIMIT 1
         </where>
     </select>
 

@@ -129,7 +129,7 @@ public class CallWarningServiceImpl implements CallWarningService {
                 Asserts.notNull(runParam, "任务运行参数缺失");
                 CallWarningProgramTask callWarningProgramTask =
                         createCallWarningProgramTask(runParam.getAbsolutePath(),
-                                trackName(task.getId(), taskDetails.getId()), ObjectUtil.isNull(param));
+                                trackId(task.getId(), taskDetails.getId()), ObjectUtil.isNull(param));
                 executorService.submit(callWarningProgramTask);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -234,6 +234,10 @@ public class CallWarningServiceImpl implements CallWarningService {
         return String.join(StrUtil.UNDERLINE, "task" + mainTaskId, "gj" + detailId);
     }
 
+    private String trackId(Long mainTaskId, Long detailId){
+        return String.join(StrUtil.UNDERLINE,  String.valueOf(mainTaskId),String.valueOf(detailId));
+    }
+
     /**
      * 设置UTC 时间
      *
@@ -295,7 +299,7 @@ public class CallWarningServiceImpl implements CallWarningService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateTaskStrategy(JSONObject resultCollect, String logTrackId) {
-        Assert.isNull(logTrackId, "logTrackId 不可为空");
+        Assert.notNull(logTrackId, "logTrackId 不可为空");
         // 1. 得到taskId 和 detailsId
         String[] split = logTrackId.split(StrUtil.UNDERLINE);
         Assert.isTrue(split.length == 2, "logTrackId 不符合规则 :taskId_detailID");
