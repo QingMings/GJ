@@ -1,6 +1,5 @@
 package com.yhl.gj.model;
 
-import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -15,13 +14,6 @@ import java.util.Date;
 @Data
 @TableName(value = "HZGJ.GJ_TASK_DETAILS")
 public class TaskDetails {
-    public TaskDetails(Long taskId, String orderPath, String taskName, Integer taskType) {
-        this.taskId = taskId;
-        this.orderPath = orderPath;
-        this.createTime = DateUtil.date();
-        this.taskName = taskName;
-        this.taskType = taskType;
-    }
     /**
      * 任务详情表ID
      */

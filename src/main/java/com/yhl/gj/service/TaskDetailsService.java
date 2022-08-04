@@ -22,3 +22,4 @@ public interface TaskDetailsService extends IService<TaskDetails> {
     Integer updateTaskName(String satelliteName, Long id);
 }
 
+
