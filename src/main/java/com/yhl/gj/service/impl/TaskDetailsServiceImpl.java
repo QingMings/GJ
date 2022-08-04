@@ -1,5 +1,6 @@
 package com.yhl.gj.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,14 +9,21 @@ import com.yhl.gj.dto.LastTaskDetailsDTO;
 import com.yhl.gj.mapper.TaskDetailsMapper;
 import com.yhl.gj.model.TaskDetails;
 import com.yhl.gj.param.TaskDetailsQueryRequest;
+import com.yhl.gj.service.CallWarningService;
 import com.yhl.gj.service.TaskDetailsService;
 import com.yhl.gj.vo.TaskDetailsVO;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
+
+import static com.yhl.gj.commons.constant.Constants.*;
 
 @Service
 public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskDetails> implements TaskDetailsService {
+
+    @Resource
+    private CallWarningService callWarningService;
     /**
      * 根据任务ID查找最新的任务详情ID
      *
@@ -45,11 +53,40 @@ public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskD
      * 查看任务详情的运行参数和运行结果数据
      */
     @Override
-    public Response<JSONObject> showTaskDetailRunParamsAndResult(Long detailId) {
-        String strategy = baseMapper.getStrategy(detailId);
-        JSONObject strategyJson = JSON.parseObject(strategy);
+    public Response<TaskDetailsVO> showTaskDetailRunParamsAndResult(Long detailId) {
+        TaskDetails taskDetails = getById(detailId);
+        TaskDetailsVO taskDetailsVO = new TaskDetailsVO();
+        convertToVO(taskDetailsVO,taskDetails);
+        return Response.buildSucc(taskDetailsVO);
+    }
 
-        return Response.buildSucc(strategyJson);
+    /**
+     * 转换vo
+     */
+    private void  convertToVO(TaskDetailsVO taskDetailsVO,TaskDetails taskDetails){
+        taskDetailsVO.setId(taskDetails.getId());
+        taskDetailsVO.setTaskId(taskDetails.getTaskId());
+        taskDetailsVO.setTaskName(taskDetails.getTaskName());
+        taskDetailsVO.setTaskType(taskDetails.getTaskType());
+        taskDetailsVO.setMenaceSource(taskDetails.getMenaceSource());
+        taskDetailsVO.setCreateTime(taskDetails.getCreateTime());
+        taskDetailsVO.setOrderPath(taskDetails.getOrderPath());
+        taskDetailsVO.setWarnLevel(taskDetails.getWarnLevel());
+        JSONObject defaultParam = callWarningService.loadDefaultParams();
+        JSONObject runParams = JSON.parseObject(taskDetails.getRunParams()).getJSONObject(params);
+        runParams.put(path_leap_default_flag,isDefaultConfig(path_leap,defaultParam,runParams));
+        runParams.put(path_eop_default_flag,isDefaultConfig(path_eop,defaultParam,runParams));
+        runParams.put(path_swd_default_flag,isDefaultConfig(path_swd,defaultParam,runParams));
+        runParams.put(path_error_default_flag,isDefaultConfig(path_error,defaultParam,runParams));
+        taskDetailsVO.setRunParams(JSON.parseObject(taskDetails.getRunParams()).getJSONObject(params));
+        taskDetailsVO.setStrategy(JSON.parseObject(taskDetails.getStrategy()));
+    }
+
+    /**
+     * 是否是默认配置项
+     */
+    private boolean  isDefaultConfig(String key,JSONObject defaultObject,JSONObject runParam){
+        return  defaultObject.getString(key).equals(runParam.getString(key));
     }
 
     /**

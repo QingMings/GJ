@@ -20,7 +20,8 @@ spring:
       driver-class-name: com.oscar.Driver
       #      url: jdbc:oscar://www.qingmings.cn:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
       #      url: jdbc:oscar://192.168.1.14:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
-      url: jdbc:oscar://192.168.43.236:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+#      url: jdbc:oscar://192.168.43.244:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+      url: jdbc:oscar://192.168.0.103:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
       #      username: SYSDBA
       username: DSUSER
       #      password: szoscar55
@@ -78,7 +79,8 @@ spring:
   rabbitmq:
     username: hzgj
     password: hzgj123456
-    host: 192.168.43.244
+#    host: 192.168.43.244
+    host: 192.168.0.102
     port: 5672
     virtual-host: hzgj
     listener:

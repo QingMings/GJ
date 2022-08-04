@@ -280,6 +280,7 @@ public class CallWarningServiceImpl implements CallWarningService {
     /**
      * 获取默认配置
      */
+    @Override
     public JSONObject loadDefaultParams() {
         Config defaultConfig = configService.getOne(Wrappers.lambdaQuery(Config.class).eq(Config::getIsDefault, Constants.DEFAULT_CONFIG));
         if (ObjectUtil.isNull(defaultConfig)) {

@@ -16,6 +16,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -123,6 +124,7 @@ public class PyLogProcessComponent {
                             }
                         });
                     }
+                    resultCollect.put("position_relation",detailObject);
                     break;
                 case "150":
                     JSONObject max_GJ = JSON.parseObject(l.getLogDetail());
@@ -137,7 +139,28 @@ public class PyLogProcessComponent {
 
     private void positionHandle(JSONObject positionObject,String key){
         String content = FileUtil.readUtf8String(positionObject.getString(key));
-        positionObject.put(key,JSON.parseObject(content));
+        JSONObject contentObject = JSON.parseObject(content);
+         JSONArray pointsJsonArray = contentObject.getJSONArray("points");
+        List<BigDecimal[]> chart1dataList = new ArrayList<>();
+        List<BigDecimal>  chart2dataList = new ArrayList<>();
+        List<String> chart2utcList = new ArrayList<>();
+         pointsJsonArray.forEach(o -> {
+             JSONObject point = (JSONObject) o;
+             BigDecimal[] pointArray = new BigDecimal[]{point.getBigDecimal("dt"),point.getBigDecimal("ds")};
+             chart1dataList.add(pointArray);
+             chart2dataList.add(point.getBigDecimal("dist"));
+             chart2utcList.add(point.getString("utc"));
+         });
+         JSONObject output = new JSONObject();
+         output.put("satid_p",contentObject.getIntValue("satid_p"));
+         output.put("satid_s",contentObject.getIntValue("satid_s"));
+         output.put("chart1",chart1dataList.toArray());
+         JSONObject chart2 = new JSONObject();
+         chart2.put("x",chart2utcList.toArray());
+         chart2.put("y",chart2dataList.toArray());
+         output.put("chart2",chart2);
+
+        positionObject.put(key,output);
     }
 
     private Log createPyLog(Matcher m, String model, String logTrackId) {

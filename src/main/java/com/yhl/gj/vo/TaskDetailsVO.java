@@ -2,6 +2,7 @@ package com.yhl.gj.vo;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.yhl.gj.model.TaskDetails;
 import lombok.Data;
 
 import java.util.Date;
@@ -28,4 +29,7 @@ public class TaskDetailsVO {
     private String  strategyStr;
     // 规避策略
     private JSONObject strategy;
+
+    private JSONObject runParams;
+
 }

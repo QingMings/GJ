@@ -3,11 +3,13 @@ package com.yhl.gj.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.dto.CustomParam;
+import com.yhl.gj.model.TaskDetails;
 import com.yhl.gj.param.ChooseDetailRequest;
 import com.yhl.gj.param.TaskDetailsQueryRequest;
 import com.yhl.gj.param.TaskQueryRequest;
 import com.yhl.gj.service.TaskDetailsService;
 import com.yhl.gj.service.TaskService;
+import com.yhl.gj.vo.TaskDetailsVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -53,7 +55,7 @@ public class OrderTaskController {
      * 查看任务运行结果和当时的运行参数
      */
     @GetMapping("/showRunParamsAndResult/{detailId}")
-    private Response<JSONObject> showTaskDetailRunParamsAndResult(@PathVariable("detailId") Long detailId) {
+    private Response<TaskDetailsVO> showTaskDetailRunParamsAndResult(@PathVariable("detailId") Long detailId) {
         return taskDetailsService.showTaskDetailRunParamsAndResult(detailId);
     }
 

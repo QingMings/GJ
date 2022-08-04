@@ -7,9 +7,9 @@ public interface Constants {
     String DEFAULT_CHARSET = "UTF-8";
     String TOKEN = "token";
     String COMMA = ",";
-    String FILE_SEPARATOR="/";
+    String FILE_SEPARATOR = "/";
     String PARAM_USER_ID = "userId";
-    String PARAM_USER_NAME="userName";
+    String PARAM_USER_NAME = "userName";
     Integer ZERO = 0;
     Integer ONE = 1;
     Integer TWO = 2;
@@ -61,6 +61,17 @@ public interface Constants {
     String TargetOrbit = "targetOrbit";
     String before = "before";
     String after = "after";
+
+    String path_leap = "path_leap";
+    String path_leap_default_flag = "path_leap_default_flag";
+    String path_eop = "path_eop";
+    String path_eop_default_flag = "path_eop_default_flag";
+    String path_swd = "path_swd";
+    String path_swd_default_flag = "path_swd_default_flag";
+    String path_error = "path_error";
+    String path_error_default_flag = "path_error_default_flag";
+
+    String params = "params";
 
 
 }

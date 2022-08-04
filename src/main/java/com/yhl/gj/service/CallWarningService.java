@@ -16,4 +16,7 @@ public interface CallWarningService {
     JSONObject loadDefaultParams();
 
     void updateTaskStrategy(JSONObject resultCollect, String logTrackId);
+
+
+
 }
