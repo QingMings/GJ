@@ -2,6 +2,7 @@ package com.yhl.gj.component;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -75,18 +76,17 @@ public class PyLogProcessComponent {
         // 保存日志到数据库
         logService.saveBatch(logs);
         // 次目标告警结果收集
-        JSONArray target_GJ_events = new JSONArray();
-
+        JSONArray target_Orbit_GJ_events = new JSONArray();
         // 搜集结果
         JSONObject resultCollect = new JSONObject();
-        resultCollect.put(TargetOrbit, target_GJ_events);
+        resultCollect.put(TargetOrbit, target_Orbit_GJ_events);
 
 
-        logs.stream().filter(l -> PyLogType.RESULT.equals(l.getLogType())).forEach(l -> {
+        logs.stream().filter(l -> PyLogType.RESULT.equals(StrUtil.trim(l.getLogType()))).forEach(l -> {
             switch (l.getCode()) {
                 case "100":   // 次目标轨道接近事件 生成告警信息 完成
                     JSONObject targetOrbit_GJ = JSON.parseObject(l.getLogDetail());
-                    target_GJ_events.add(targetOrbit_GJ.getJSONObject(Detail));
+                    target_Orbit_GJ_events.add(targetOrbit_GJ.getJSONObject(Detail));
                     break;
                 case "110":  // 计算规避策略 完成
                     JSONObject strategy = JSON.parseObject(l.getLogDetail());
@@ -95,7 +95,7 @@ public class PyLogProcessComponent {
                     break;
                 case "120":  // 激光告警 完成
                     JSONObject targetLaser_GJ = JSON.parseObject(l.getLogDetail());
-                    JSONObject laser_detail = targetLaser_GJ.getJSONObject(Detail);
+                    JSONArray laser_detail = targetLaser_GJ.getJSONArray(Detail);
                     resultCollect.put(TargetLaser, laser_detail);
                     break;
                 case "130":  // 系统观测精度评估 完成
