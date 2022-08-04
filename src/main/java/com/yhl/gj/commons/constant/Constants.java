@@ -49,4 +49,16 @@ public interface Constants {
     // =========== 默认参数文件名 ======================
     String DEFAULT_PARAM = "defaultParam.json";
 
+    //============= 构建输出 的 jsonKey ===========
+
+    String Detail = "detail";
+    String Path = "path";
+
+    String MAX_GJ = "max_GJ";
+    String PinGu = "pinGu";
+    String TargetLaser = "targetLaser";
+    String STRATEGY = "strategy";
+    String TargetOrbit = "targetOrbit";
+
+
 }

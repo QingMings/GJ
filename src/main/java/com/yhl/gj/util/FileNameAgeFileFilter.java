@@ -3,6 +3,7 @@ package com.yhl.gj.util;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import org.apache.commons.io.filefilter.AbstractFileFilter;
 
 import java.io.File;
@@ -22,6 +23,7 @@ public class FileNameAgeFileFilter extends AbstractFileFilter implements Seriali
 
     private static final long serialVersionUID = 5111488652911324270L;
 
+    private static String DateFormatPattern = "yyyy_MM_dd_HH_mm_ss.S";
     private final boolean acceptOlder;
 
     private final long cutoffMillis;
@@ -86,9 +88,9 @@ public class FileNameAgeFileFilter extends AbstractFileFilter implements Seriali
 
     private static long parseFileNameDate(File cutoffReference) {
         String fileName = FileUtil.mainName(cutoffReference);
-        int index = fileName.indexOf("_");
+        int index = fileName.indexOf(StrUtil.UNDERLINE);
         String timePart = fileName.substring(index + 1);
-        DateTime dateTime = DateUtil.parse(timePart, "yyyy_MM_dd_HH_mm_ss.S");
+        DateTime dateTime = DateUtil.parse(timePart, DateFormatPattern);
         return dateTime.getTime();
     }
 

@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -50,8 +51,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -110,7 +113,7 @@ public class CallWarningServiceImpl implements CallWarningService {
     @Override
     public Response<Integer> executeTask(Task task, JSONObject param) {
         try {
-            TaskDetails taskDetails = createTaskDetails(task, ObjectUtil.isNotNull(param));
+            TaskDetails taskDetails = createTaskDetails(task, ObjectUtil.isNull(param));
             JSONObject taskJson = buildOrderId(task.getId(), taskDetails.getId());
             JSONObject inputFilePaths = loadOrderFiles(task.getOrderPath(), taskDetails);
             JSONObject configParam = ObjectUtil.defaultIfNull(param, loadDefaultParams());
@@ -125,9 +128,8 @@ public class CallWarningServiceImpl implements CallWarningService {
             try {
                 Asserts.notNull(runParam, "任务运行参数缺失");
                 CallWarningProgramTask callWarningProgramTask =
-                        createCallWarningProgramTask(runParam.getAbsolutePath(), String.join("_",
-                                String.valueOf(task.getId()),
-                                String.valueOf(taskDetails.getId())), ObjectUtil.isNull(param));
+                        createCallWarningProgramTask(runParam.getAbsolutePath(),
+                                trackName(task.getId(), taskDetails.getId()), ObjectUtil.isNull(param));
                 executorService.submit(callWarningProgramTask);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -223,9 +225,13 @@ public class CallWarningServiceImpl implements CallWarningService {
      * 构建任务运行参数的文件名称
      */
     private String buildRunParamName(Long mainTaskId, Long detailId) {
-        return String.join("_",
+        return String.join(StrUtil.UNDERLINE,
                 "任务" + mainTaskId,
                 "告警" + detailId, DateUtil.format(DateUtil.date(), PURE_DATETIME_FORMAT));
+    }
+
+    private String trackName(Long mainTaskId, Long detailId) {
+        return String.join(StrUtil.UNDERLINE, "task" + mainTaskId, "gj" + detailId);
     }
 
     /**
@@ -235,7 +241,7 @@ public class CallWarningServiceImpl implements CallWarningService {
      */
     private void startUTC(JSONObject configParam) {
 //        LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("UTC"));
-        LocalDateTime localDateTime = LocalDateTime.of(2020,11,28,00,00,00);
+        LocalDateTime localDateTime = LocalDateTime.of(2020, 11, 28, 00, 00, 00);
         configParam.put("time_start_utc", DateUtil.format(localDateTime, NORM_DATETIME_MS_PATTERN));
     }
 
@@ -263,7 +269,7 @@ public class CallWarningServiceImpl implements CallWarningService {
      */
     private JSONObject buildOrderId(Long mainTaskId, Long detailId) {
         JSONObject taskJson = new JSONObject();
-        taskJson.put("order_id", String.join("_", "task" + mainTaskId, "gj" + detailId));
+        taskJson.put("order_id", trackName(mainTaskId, detailId));
         return taskJson;
     }
 
@@ -277,6 +283,46 @@ public class CallWarningServiceImpl implements CallWarningService {
             return config;
         }
         return JSON.parseObject(defaultConfig.getConfig());
+    }
+
+
+    /**
+     * 将结果更新到数据库中
+     *
+     * @param resultCollect
+     * @param logTrackId
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTaskStrategy(JSONObject resultCollect, String logTrackId) {
+        Assert.isNull(logTrackId, "logTrackId 不可为空");
+        // 1. 得到taskId 和 detailsId
+        String[] split = logTrackId.split(StrUtil.UNDERLINE);
+        Assert.isTrue(split.length == 2, "logTrackId 不符合规则 :taskId_detailID");
+        Long taskId = Long.valueOf(split[0]);
+        Long detailId = Long.valueOf(split[1]);
+        Task task = taskService.getById(taskId);
+        TaskDetails taskDetails = detailsService.getById(detailId);
+        Assert.notNull(task, "根据 taskId：{} 未找到数据", taskId);
+        Assert.notNull(taskDetails, "根据 detailId:{} 未找到数据 ", detailId);
+        //2. 解析收集结果中是否包含最大高告警等级，更新task和details 中的等级
+        if (resultCollect.containsKey(MAX_GJ)) {
+            JSONObject max_GJ = resultCollect.getJSONObject(MAX_GJ);
+            String type = max_GJ.getString("type");
+            Integer lv = max_GJ.getIntValue("lv");
+            // 设置当前等级
+            task.setCurWarnLevel(lv);
+            // 设置历史最高等级
+            Integer historyMaxLV = task.getMaxWarnLevel();
+            task.setMaxWarnLevel(lv > historyMaxLV ? lv : historyMaxLV);
+            // 威胁等级
+            taskDetails.setWarnLevel(lv);
+            // 威胁来源
+            taskDetails.setMenaceSource("orbit".equals(type) ? "轨道接近" : "激光照射");
+        }
+        taskDetails.setStrategy(resultCollect.toJSONString());
+        taskService.updateById(task);
+        detailsService.updateById(taskDetails);
     }
 
     /**
@@ -420,10 +466,10 @@ public class CallWarningServiceImpl implements CallWarningService {
     }
 
     private String getName(String fileName) {
-        if (!fileName.contains("_")) {
+        if (!fileName.contains(StrUtil.UNDERLINE)) {
             return "";
         }
-        int index = fileName.indexOf("_");
+        int index = fileName.indexOf(StrUtil.UNDERLINE);
         return fileName.substring(0, index);
     }
 

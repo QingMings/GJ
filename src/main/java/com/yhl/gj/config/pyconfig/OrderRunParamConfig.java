@@ -3,6 +3,7 @@ package com.yhl.gj.config.pyconfig;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.yhl.gj.commons.base.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,20 +45,20 @@ public class OrderRunParamConfig {
 
     private String createDirByDay(String orderRunParamSavePath) {
         if (createDirByDay) {
-            orderRunParamSavePath = orderRunParamSavePath.concat("/").concat(DateUtil.today());
+            orderRunParamSavePath = orderRunParamSavePath.concat(StrUtil.SLASH).concat(DateUtil.today());
         }
         return orderRunParamSavePath;
     }
 
     private String createDirByTask(String orderRunParamSavePath, String fileName) {
         if (createDirByTask) {
-            int index = fileName.indexOf("_");
-            orderRunParamSavePath = orderRunParamSavePath.concat("/").concat(fileName.substring(0, index));
+            int index = fileName.indexOf(StrUtil.UNDERLINE);
+            orderRunParamSavePath = orderRunParamSavePath.concat(StrUtil.SLASH).concat(fileName.substring(0, index));
         }
         return orderRunParamSavePath;
     }
 
     private String appendFileName(String orderRunParamSavePath, String fileName) {
-        return orderRunParamSavePath.concat("/").concat(fileName).concat(".json");
+        return orderRunParamSavePath.concat(StrUtil.SLASH).concat(fileName).concat(".json");
     }
 }

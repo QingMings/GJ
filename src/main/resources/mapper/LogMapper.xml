@@ -8,11 +8,12 @@
     <result column="TRACK_ID" jdbcType="VARCHAR" property="trackId" />
     <result column="ORDER_TYPE" jdbcType="VARCHAR" property="orderType" />
     <result column="LOG_TYPE" jdbcType="VARCHAR" property="logType" />
-    <result column="LOG_DETAIL" jdbcType="LONGVARCHAR" property="logDetail" />
     <result column="LOG_TIME" jdbcType="TIMESTAMP" property="logTime" />
+    <result column="LOG_DETAIL" jdbcType="LONGVARCHAR" property="logDetail" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    ID, TRACK_ID, ORDER_TYPE, LOG_TYPE, LOG_DETAIL, LOG_TIME
+    ID, TRACK_ID, ORDER_TYPE, LOG_TYPE, LOG_TIME, LOG_DETAIL, CODE
   </sql>
 </mapper>

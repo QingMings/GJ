@@ -1,7 +1,10 @@
 package com.yhl.gj.component;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.io.FileUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.yhl.gj.commons.constant.PyLogType;
 import com.yhl.gj.model.Log;
 import com.yhl.gj.service.CallWarningService;
@@ -11,14 +14,17 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.yhl.gj.commons.constant.Constants.*;
 
 @Slf4j
 @Component
@@ -33,44 +39,102 @@ public class PyLogProcessComponent {
     @Resource
     private CallWarningService callWarningService;
 
-    public void pythonPrintProcess(String pyLog, String model) {
-        log.info(pyLog);
-        Matcher m = pyLogRegexPattern.matcher(pyLog);
-        if (!m.find()){
-            log.error(pyLog);
-            return;
+
+    private void saveLogToDB() {
+
+    }
+
+    /**
+     * 设置日志时间
+     *
+     * @param logTime
+     * @return
+     */
+    private Date setUTCTime(String logTime) {
+        LocalDateTime localDateTime = DateUtil.parseLocalDateTime(logTime, "yyyy-MM-dd HH:mm:ss.SSSSSS");
+        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+        Instant instant = zonedDateTime.toInstant();
+        ;
+        return Date.from(instant);
+    }
+
+    /**
+     * python 日志 输出
+     */
+    public void pythonLogHandle(List<String> pylogs, String logTrackId, String model) {
+        List<Log> logs = new ArrayList<>();
+        for (String pylog : pylogs) {
+            Matcher m = pyLogRegexPattern.matcher(pylog);
+            if (!m.find()) {
+                log.error(pylog);
+                continue;
+            }
+            Log logInfo = createPyLog(m, model, logTrackId);
+            logs.add(logInfo);
         }
+        // 保存日志到数据库
+        logService.saveBatch(logs);
+        // 次目标告警结果收集
+        JSONArray target_GJ_events = new JSONArray();
+
+        // 搜集结果
+        JSONObject resultCollect = new JSONObject();
+        resultCollect.put(TargetOrbit, target_GJ_events);
+
+
+        logs.stream().filter(l -> PyLogType.RESULT.equals(l.getLogType())).forEach(l -> {
+            switch (l.getCode()) {
+                case "100":   // 次目标轨道接近事件 生成告警信息 完成
+                    JSONObject targetOrbit_GJ = JSON.parseObject(l.getLogDetail());
+                    target_GJ_events.add(targetOrbit_GJ.getJSONObject(Detail));
+                    break;
+                case "110":  // 计算规避策略 完成
+                    JSONObject strategy = JSON.parseObject(l.getLogDetail());
+                    JSONObject strategyDetail = strategy.getJSONObject(Detail);
+                    resultCollect.put(STRATEGY, strategyDetail);
+                    break;
+                case "120":  // 激光告警 完成
+                    JSONObject targetLaser_GJ = JSON.parseObject(l.getLogDetail());
+                    JSONObject laser_detail = targetLaser_GJ.getJSONObject(Detail);
+                    resultCollect.put(TargetLaser, laser_detail);
+                    break;
+                case "130":  // 系统观测精度评估 完成
+                    JSONObject pinGu = JSON.parseObject(l.getLogDetail());
+                    JSONObject pinGu_detail = pinGu.getJSONObject(Detail);
+                    String filePath = pinGu_detail.getString(Path);
+                    if (FileUtil.exist(filePath)) {
+                        String fileContent = FileUtil.readUtf8String(filePath);
+                        JSONArray jsonFile = JSON.parseArray(fileContent);
+                        resultCollect.put(PinGu, jsonFile);
+                    }
+                    break;
+                case "140":  // 写入相对位置关系描点数据文件 完成
+//                    JSONObject  positionFile = JSON.par
+                    break;
+
+                case "150":
+                    JSONObject max_GJ = JSON.parseObject(l.getLogDetail());
+                    JSONObject maxDetail = max_GJ.getJSONObject(Detail);
+                    resultCollect.put(MAX_GJ, maxDetail);
+                    break;
+            }
+        });
+
+        callWarningService.updateTaskStrategy(resultCollect, logTrackId);
+    }
+
+    private Log createPyLog(Matcher m, String model, String logTrackId) {
         String logType = m.group(1);
         String logTime = m.group(2);
         String logCode = m.group(3);
         String logDetails = m.group(4);
         Log logInfo = new Log();
         logInfo.setOrderType(model);
+        logInfo.setCode(logCode);
         logInfo.setLogDetail(logDetails);
-        LocalDateTime localDateTime = DateUtil.parseLocalDateTime(logTime, "yyyy-MM-dd HH:mm:ss.SSSSSS");
-        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
-        Instant instant = zonedDateTime.toInstant();;
-        Date date = Date.from(instant);
-        logInfo.setLogTime(new Timestamp(date.getTime()));
+        logInfo.setLogTime(setUTCTime(logTime));
         logInfo.setLogType(logType);
-        logInfo.setTrackId("100");
-        logService.save(logInfo);
-
-        switch (StrUtil.trim(logType)){
-            case PyLogType.PROGRESS:
-                log.info("{}--{}",logType,logDetails);
-                break;
-            case PyLogType.RESULT:
-                log.info("{}--{}",logType,logDetails);
-                break;
-            case PyLogType.ERROR:
-//                log.error("{}--{}",logType,logDetails);
-                break;
-            default:
-                log.info(logDetails);
-        }
-    }
-    private void saveLogToDB(){
-
+        logInfo.setTrackId(logTrackId);
+        return logInfo;
     }
 }

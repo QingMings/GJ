@@ -4,11 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.sql.Date;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 日志记录表
@@ -31,23 +29,19 @@ public class Log {
     @TableField(value = "ORDER_TYPE")
     private String orderType;
 
-    /**
-     * 日志类型 PROGRESS、Result
-     */
-    @TableField(value = "LOG_TYPE")
-    private String logType;
+    public static final String COL_LOG_TIME = "LOG_TIME";
+    public static final String COL_CODE = "CODE";
 
     /**
      * 日志详情
      */
     @TableField(value = "LOG_DETAIL")
     private String logDetail;
-
     /**
-     * 日志时间
+     * 日志类型 Progress、Result
      */
-    @TableField(value = "LOG_TIME")
-    private Timestamp logTime;
+    @TableField(value = "LOG_TYPE")
+    private String logType;
 
     public static final String COL_ID = "ID";
 
@@ -56,8 +50,16 @@ public class Log {
     public static final String COL_ORDER_TYPE = "ORDER_TYPE";
 
     public static final String COL_LOG_TYPE = "LOG_TYPE";
+    /**
+     * 日志产生时间
+     */
+    @TableField(value = "LOG_TIME")
+    private Date logTime;
 
     public static final String COL_LOG_DETAIL = "LOG_DETAIL";
-
-    public static final String COL_LOG_TIME = "LOG_TIME";
+    /**
+     * 日志编码
+     */
+    @TableField(value = "CODE")
+    private String code;
 }
