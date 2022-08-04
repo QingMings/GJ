@@ -1,6 +1,7 @@
 package com.yhl.gj.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.dto.LastTaskDetailsDTO;
@@ -44,10 +45,11 @@ public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskD
      * 查看任务详情的运行参数和运行结果数据
      */
     @Override
-    public Response<Integer> showTaskDetailRunParamsAndResult(Long detailId) {
-        TaskDetails taskDetails = getById(detailId);
-        // todo 这里还需处理py程序生成的数据，看是读取转json还是怎么弄
-        return Response.buildSucc();
+    public Response<JSONObject> showTaskDetailRunParamsAndResult(Long detailId) {
+        String strategy = baseMapper.getStrategy(detailId);
+        JSONObject strategyJson = JSON.parseObject(strategy);
+
+        return Response.buildSucc(strategyJson);
     }
 
     /**

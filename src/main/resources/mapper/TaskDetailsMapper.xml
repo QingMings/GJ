@@ -82,4 +82,9 @@
         set TASK_NAME = #{satelliteName}
         where ID = #{id}
     </update>
+
+  <select id="getStrategy" resultType="java.lang.String">
+       select STRATEGY from HZGJ.GJ_TASK_DETAILS
+       where ID = #{detailId}
+  </select>
 </mapper>

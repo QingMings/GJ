@@ -53,7 +53,7 @@ public class OrderTaskController {
      * 查看任务运行结果和当时的运行参数
      */
     @GetMapping("/showRunParamsAndResult/{detailId}")
-    private Response<Integer> showTaskDetailRunParamsAndResult(@PathVariable("detailId") Long detailId) {
+    private Response<JSONObject> showTaskDetailRunParamsAndResult(@PathVariable("detailId") Long detailId) {
         return taskDetailsService.showTaskDetailRunParamsAndResult(detailId);
     }
 

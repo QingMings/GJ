@@ -324,6 +324,7 @@ public class CallWarningServiceImpl implements CallWarningService {
             // 威胁来源
             taskDetails.setMenaceSource("orbit".equals(type) ? "轨道接近" : "激光照射");
         }
+        task.setUpdateDate(DateUtil.date());
         taskDetails.setStrategy(resultCollect.toJSONString());
         taskService.updateById(task);
         detailsService.updateById(taskDetails);

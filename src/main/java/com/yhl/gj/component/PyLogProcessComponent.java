@@ -3,6 +3,7 @@ package com.yhl.gj.component;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -109,9 +110,20 @@ public class PyLogProcessComponent {
                     }
                     break;
                 case "140":  // 写入相对位置关系描点数据文件 完成
-//                    JSONObject  positionFile = JSON.par
+                    JSONObject positionFile = JSON.parseObject(l.getLogDetail());
+                    JSONObject detailObject = positionFile.getJSONObject(Detail);
+                    if (!detailObject.isEmpty()){
+                        detailObject.forEach((k,v) -> {
+                            JSONObject positionObject = detailObject.getJSONObject(k);
+                            if (positionObject.containsKey(before)){
+                                positionHandle(positionObject,before);
+                            }
+                            if (positionObject.containsKey(after)){
+                                positionHandle(positionObject,after);
+                            }
+                        });
+                    }
                     break;
-
                 case "150":
                     JSONObject max_GJ = JSON.parseObject(l.getLogDetail());
                     JSONObject maxDetail = max_GJ.getJSONObject(Detail);
@@ -121,6 +133,11 @@ public class PyLogProcessComponent {
         });
 
         callWarningService.updateTaskStrategy(resultCollect, logTrackId);
+    }
+
+    private void positionHandle(JSONObject positionObject,String key){
+        String content = FileUtil.readUtf8String(positionObject.getString(key));
+        positionObject.put(key,JSON.parseObject(content));
     }
 
     private Log createPyLog(Matcher m, String model, String logTrackId) {

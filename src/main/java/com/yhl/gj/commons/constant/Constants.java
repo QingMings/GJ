@@ -59,6 +59,8 @@ public interface Constants {
     String TargetLaser = "targetLaser";
     String STRATEGY = "strategy";
     String TargetOrbit = "targetOrbit";
+    String before = "before";
+    String after = "after";
 
 
 }

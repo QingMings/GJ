@@ -13,4 +13,6 @@ public interface TaskDetailsMapper extends BaseMapper<TaskDetails> {
     TaskDetails selectLastTaskDetails(@Param("id") Long id);
 
     Integer updateTaskName(@Param("satelliteName") String satelliteName, @Param("id") Long id);
+
+    String getStrategy(@Param("detailId") Long detailId);
 }

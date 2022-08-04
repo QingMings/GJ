@@ -1,5 +1,6 @@
 package com.yhl.gj.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.dto.LastTaskDetailsDTO;
@@ -15,7 +16,7 @@ public interface TaskDetailsService extends IService<TaskDetails> {
 
     Response queryTaskDetailsByTaskId(TaskDetailsQueryRequest request);
 
-    Response<Integer> showTaskDetailRunParamsAndResult(Long detailId);
+    Response<JSONObject> showTaskDetailRunParamsAndResult(Long detailId);
 
     TaskDetails findLastTaskDetails(Long id);
 
