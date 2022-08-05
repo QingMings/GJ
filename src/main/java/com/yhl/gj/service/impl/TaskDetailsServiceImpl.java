@@ -1,6 +1,7 @@
 package com.yhl.gj.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.Assert;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -55,6 +56,7 @@ public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskD
     @Override
     public Response<TaskDetailsVO> showTaskDetailRunParamsAndResult(Long detailId) {
         TaskDetails taskDetails = getById(detailId);
+        Assert.notNull(taskDetails,"根据 detailId:{} 未找到数据",detailId);
         TaskDetailsVO taskDetailsVO = new TaskDetailsVO();
         convertToVO(taskDetailsVO,taskDetails);
         return Response.buildSucc(taskDetailsVO);
