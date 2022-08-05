@@ -80,8 +80,8 @@ public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskD
         runParams.put(path_leap_default_flag,isDefaultConfig(path_leap,defaultParam,runParams));
         runParams.put(path_eop_default_flag,isDefaultConfig(path_eop,defaultParam,runParams));
         runParams.put(path_swd_default_flag,isDefaultConfig(path_swd,defaultParam,runParams));
-        runParams.put(path_error_default_flag,isDefaultConfig(path_error,defaultParam,runParams));
-        taskDetailsVO.setRunParams(JSON.parseObject(taskDetails.getRunParams()).getJSONObject(params));
+        runParams.put(path_error_default_flag, isDefaultConfig(path_error, defaultParam, runParams));
+        taskDetailsVO.setRunParams(runParams);
         taskDetailsVO.setStrategy(JSON.parseObject(taskDetails.getStrategy()));
     }
 
