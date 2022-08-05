@@ -1,5 +1,6 @@
 package com.yhl.gj.component;
 
+import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.system.SystemUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,9 @@ public class CallWarningProgramTask extends Thread {
 
     @Override
     public void run() {
-        log.info("run callWarningProgramTask ");
+        log.info("run callWarningProgramTask:{} ",logTrackId);
+        StopWatch stopWatch = new StopWatch(logTrackId);
+        stopWatch.start();
         Process proc = null;
         try {
             ProcessBuilder pb = new ProcessBuilder(cmdArray);
@@ -55,7 +58,8 @@ public class CallWarningProgramTask extends Thread {
                 proc.destroy();
             }
         }
-        log.info("end callWarningProgramTask ");
+        stopWatch.stop();
+        log.info("end callWarningProgramTask :{},耗時：{}",logTrackId,stopWatch.getLastTaskTimeMillis());
     }
     // 处理 python 输出的日志
 

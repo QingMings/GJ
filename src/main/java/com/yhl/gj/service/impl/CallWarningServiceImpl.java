@@ -1,6 +1,7 @@
 package com.yhl.gj.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
@@ -51,6 +52,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -238,21 +240,35 @@ public class CallWarningServiceImpl implements CallWarningService {
         return String.join(StrUtil.UNDERLINE,  String.valueOf(mainTaskId),String.valueOf(detailId));
     }
 
+    @Value("${testOrder.enable}")
+    private boolean testOrder;
+    @Value("${testOrder.startUTC}")
+    private List<Integer> dateList;
     /**
      * 设置UTC 时间
+     * 测试模式使用固定的时间
      *
      * @param configParam
      */
     private void startUTC(JSONObject configParam) {
-//        LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("UTC"));
-        LocalDateTime localDateTime = LocalDateTime.of(2020, 11, 28, 00, 00, 00);
+//
+        LocalDateTime localDateTime;
+        if (testOrder){
+            localDateTime = LocalDateTime.of(dateList.get(0),
+                    dateList.get(1), dateList.get(2), dateList.get(3), dateList.get(4), dateList.get(5));
+        }else {
+            localDateTime = LocalDateTime.now(ZoneId.of("UTC"));
+        }
         configParam.put("time_start_utc", DateUtil.format(localDateTime, NORM_DATETIME_MS_PATTERN));
+
+
     }
 
     private String[] buildCmd(String runParamPath) {
         List<String> cmd = pyCmdParamConfig.getCmd();
-        cmd.add(runParamPath);
-        return cmd.toArray(new String[0]);
+        List<String> cloneCmd=ObjectUtil.clone(cmd);
+        cloneCmd.add(runParamPath);
+        return cloneCmd.toArray(new String[0]);
     }
 
 
@@ -374,9 +390,9 @@ public class CallWarningServiceImpl implements CallWarningService {
      * 收集路径(将同一文件后缀的文件的路径组成list)
      */
     private void collectFilePath(JSONObject output, List<File> fileSource, String key) {
+        JSONArray files = new JSONArray();
+        output.put(key, files);
         if (CollectionUtils.isNotEmpty(fileSource)) {
-            JSONArray files = new JSONArray();
-            output.put(key, files);
             List<String> filePaths = fileSource.stream().map(File::getPath).collect(Collectors.toList());
             files.addAll(filePaths);
         }
@@ -388,7 +404,8 @@ public class CallWarningServiceImpl implements CallWarningService {
     private void collectFilePathOnlyOne(JSONObject output, List<File> fileSource, String key) {
         if (CollectionUtils.isNotEmpty(fileSource)) {
             output.put(key, fileSource.get(0).getPath());
-
+        }else{
+            output.put(key, StrUtil.EMPTY);
         }
     }
 
@@ -438,9 +455,9 @@ public class CallWarningServiceImpl implements CallWarningService {
      * 雷达文件需要解析文件名，单独拿出一个方法
      */
     private void collectRadarFilePath(JSONObject output, List<File> fileSource, String key) {
+        JSONArray files = new JSONArray();
+        output.put(key, files);
         if (CollectionUtils.isNotEmpty(fileSource)) {
-            JSONArray files = new JSONArray();
-            output.put(key, files);
             Map<String, Set<String>> resultMap = fileSource.stream().map(this::mappingToRadarFileDto)
                     .collect(Collectors.groupingBy(RadarFileDto::getName,
                             Collectors.mapping(RadarFileDto::getPath,
@@ -461,10 +478,15 @@ public class CallWarningServiceImpl implements CallWarningService {
             List<File> sortedFiles = CollectionUtil.sort(fileSource, NameFileComparator.NAME_REVERSE);
             File selectedFile = sortedFiles.get(0);
             output.put(key, selectedFile.getPath());
+        }else{
+            output.put(key, StrUtil.EMPTY);
         }
     }
 
     private void updateTaskName(String path, TaskDetails details) {
+        if (StrUtil.isEmpty(path)){
+            return;
+        }
         String fileName = Paths.get(path).getFileName().toString();
         String satelliteName = getName(fileName);
         Integer result = taskService.updateTaskName(satelliteName, details.getTaskId());
