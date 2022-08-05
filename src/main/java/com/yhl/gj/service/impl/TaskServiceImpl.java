@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.yhl.gj.commons.constant.Constants.*;
+import static com.yhl.gj.commons.enums.ResultEnum.DIR_NOT_EXISTS;
 import static com.yhl.gj.commons.enums.ResultEnum.TASK_ALREADY_RUNNING_ERROR;
 
 @Service
@@ -78,6 +79,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      */
     @Override
     public Response<Integer> checkTaskIsRunningByPath(OrderRequest request) {
+        String orderPath = request.getOrderPath();
+        if (!FileUtil.exist(orderPath)){
+            return Response.buildFail(DIR_NOT_EXISTS);
+        }
         List<Task> taskList = baseMapper.selectList(Wrappers.<Task>lambdaQuery().eq(Task::getOrderPath, request.getOrderPath()).eq(Task::getTaskStatus, RUNNING));
         if (CollectionUtils.isNotEmpty(taskList)) {
             return Response.buildFail(TASK_ALREADY_RUNNING_ERROR);

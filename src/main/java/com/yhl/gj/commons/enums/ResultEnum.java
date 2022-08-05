@@ -10,7 +10,7 @@ public enum ResultEnum {
     LOGIN_FAILED_TIMES_OUT(407, "登录失败次数过多，请输入验证码"),
     LOGIN_OUT_SUCCESS(200, "当前登录已注销"),
     FILE_NOT_EXISTS(500, "文件不存在!"),
-
+    DIR_NOT_EXISTS(500,"给定路径不存在"),
     REQUEST_PARAMETER_ERROR(500, "缺少必要参数"),
     TASK_ALREADY_RUNNING_ERROR(500, "任务已安排运行");
 
