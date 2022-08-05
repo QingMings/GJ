@@ -1,10 +1,11 @@
 package com.yhl.gj.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.dto.LastTaskDetailsDTO;
 import com.yhl.gj.mapper.TaskDetailsMapper;
@@ -42,12 +43,12 @@ public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskD
      */
     @Override
     public Response queryTaskDetailsByTaskId(TaskDetailsQueryRequest request) {
+        PageHelper.startPage(request.getCurrentPage(), request.getPageSize());
         List<TaskDetailsVO> taskDetailsVOList = baseMapper.queryTaskDetailsByTaskId(request);
         // 将json字符串转json对象
-        taskDetailsVOList.forEach(t -> {
-            t.setStrategy(JSON.parseObject(t.getStrategyStr()));
-        });
-        return Response.buildSucc(taskDetailsVOList);
+        taskDetailsVOList.forEach(t -> t.setStrategy(JSON.parseObject(t.getStrategyStr())));
+        PageInfo<TaskDetailsVO> pageInfo = PageInfo.of(taskDetailsVOList);
+        return Response.buildSucc(pageInfo);
     }
 
     /**

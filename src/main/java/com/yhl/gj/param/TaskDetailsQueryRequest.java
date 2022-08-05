@@ -1,11 +1,13 @@
 package com.yhl.gj.param;
 
+import com.yhl.gj.commons.base.BaseParam;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+
 @Data
-public class TaskDetailsQueryRequest  {
+public class TaskDetailsQueryRequest extends BaseParam {
 
     @NotNull(message = "任务Id必填")
     private Long taskId;
