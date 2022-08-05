@@ -7,3 +7,6 @@ server:
     session:
       cookie:
         name: display_token
+
+log:
+  path: data/logs/

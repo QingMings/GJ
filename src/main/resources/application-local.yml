@@ -76,7 +76,8 @@ mybatis-plus:
     banner: off
   configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+#    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
 # mybatis 分页插件
 pagehelper:
   auto-dialect: true
