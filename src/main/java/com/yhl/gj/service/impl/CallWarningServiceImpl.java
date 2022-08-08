@@ -98,6 +98,9 @@ public class CallWarningServiceImpl implements CallWarningService {
     @Value("${task.defaultParam.path}")
     private String defaultParamPath;
 
+    @Value("${task.enableOrderTask}")
+    private Boolean enableOrderTask;
+
     /**
      * lambda 抽方法
      */
@@ -176,20 +179,26 @@ public class CallWarningServiceImpl implements CallWarningService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Response<Integer> call(OrderRequest request) {
+    public Response call(OrderRequest request) {
         Response<Integer> response = taskService.checkTaskIsRunningByPath(request);
         if (!response.isSuccess()) {
             return response;
         }
         // 1. 创建主任务保存
         Task mainTask = createMainTask(request.getOrderPath());
-        Timer executeTaskTimer = new Timer();
-        OrderTaskShared.getOrderTaskTimerMap().put(String.valueOf(mainTask.getId()), executeTaskTimer);
-        OrderTaskTimerTask orderTaskTimerTask = new OrderTaskTimerTask(mainTask, SpringUtil.getBean(CallWarningService.class));
-        executeTaskTimer.schedule(orderTaskTimerTask, 0, ObjectUtil.defaultIfNull(taskPeriod, 3000));
-
+        if (enableOrderTask) {
+            // 通过timer 定时执行一次任务
+            Timer executeTaskTimer = new Timer();
+            OrderTaskShared.getOrderTaskTimerMap().put(String.valueOf(mainTask.getId()), executeTaskTimer);
+            OrderTaskTimerTask orderTaskTimerTask = new OrderTaskTimerTask(mainTask, SpringUtil.getBean(CallWarningService.class));
+            executeTaskTimer.schedule(orderTaskTimerTask, 0, ObjectUtil.defaultIfNull(taskPeriod, 3000));
+        } else {
+            // 直接執行一次任务
+             CallWarningService callWarningService =   SpringUtil.getBean(CallWarningService.class);
+             callWarningService.executeTask(mainTask,null);
+        }
         log.info("task:{} is accepted at {}", mainTask.getId(), DateUtil.now());
-        return Response.buildSucc();
+        return Response.buildSuccByDataId(String.valueOf(mainTask.getId()));
     }
 
 
@@ -236,14 +245,15 @@ public class CallWarningServiceImpl implements CallWarningService {
         return String.join(StrUtil.UNDERLINE, "task" + mainTaskId, "gj" + detailId);
     }
 
-    private String trackId(Long mainTaskId, Long detailId){
-        return String.join(StrUtil.UNDERLINE,  String.valueOf(mainTaskId),String.valueOf(detailId));
+    private String trackId(Long mainTaskId, Long detailId) {
+        return String.join(StrUtil.UNDERLINE, String.valueOf(mainTaskId), String.valueOf(detailId));
     }
 
     @Value("${testOrder.enable}")
     private boolean testOrder;
     @Value("${testOrder.startUTC}")
     private List<Integer> dateList;
+
     /**
      * 设置UTC 时间
      * 测试模式使用固定的时间
@@ -253,10 +263,10 @@ public class CallWarningServiceImpl implements CallWarningService {
     private void startUTC(JSONObject configParam) {
 //
         LocalDateTime localDateTime;
-        if (testOrder){
+        if (testOrder) {
             localDateTime = LocalDateTime.of(dateList.get(0),
                     dateList.get(1), dateList.get(2), dateList.get(3), dateList.get(4), dateList.get(5));
-        }else {
+        } else {
             localDateTime = LocalDateTime.now(ZoneId.of("UTC"));
         }
         configParam.put("time_start_utc", DateUtil.format(localDateTime, NORM_DATETIME_MS_PATTERN));
@@ -266,7 +276,7 @@ public class CallWarningServiceImpl implements CallWarningService {
 
     private String[] buildCmd(String runParamPath) {
         List<String> cmd = pyCmdParamConfig.getCmd();
-        List<String> cloneCmd=ObjectUtil.clone(cmd);
+        List<String> cloneCmd = ObjectUtil.clone(cmd);
         cloneCmd.add(runParamPath);
         return cloneCmd.toArray(new String[0]);
     }
@@ -404,7 +414,7 @@ public class CallWarningServiceImpl implements CallWarningService {
     private void collectFilePathOnlyOne(JSONObject output, List<File> fileSource, String key) {
         if (CollectionUtils.isNotEmpty(fileSource)) {
             output.put(key, fileSource.get(0).getPath());
-        }else{
+        } else {
             output.put(key, StrUtil.EMPTY);
         }
     }
@@ -478,13 +488,13 @@ public class CallWarningServiceImpl implements CallWarningService {
             List<File> sortedFiles = CollectionUtil.sort(fileSource, NameFileComparator.NAME_REVERSE);
             File selectedFile = sortedFiles.get(0);
             output.put(key, selectedFile.getPath());
-        }else{
+        } else {
             output.put(key, StrUtil.EMPTY);
         }
     }
 
     private void updateTaskName(String path, TaskDetails details) {
-        if (StrUtil.isEmpty(path)){
+        if (StrUtil.isEmpty(path)) {
             return;
         }
         String fileName = Paths.get(path).getFileName().toString();

@@ -19,3 +19,16 @@ RabbitMQ配置文件路径为：/usr/local/etc/rabbitmq/rabbitmq-env.conf
 2 配置远程访问
 2.1修改节点ip地址配置
 打开RabbitMQ配置文件，将节点ip地址修改为空格
+
+
+
+```bash
+rabbitmqctl add_user hzgj hzgj123456
+
+rabbitmqctl set_user_tags hagj administrator
+
+rabbitmqctl add_vhost hzgj 
+
+rabbitmqctl set_permissions -p hzgj hzgj ".*" ".*" ".*" 
+
+```

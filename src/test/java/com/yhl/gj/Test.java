@@ -1,3 +1,4 @@
+package com.yhl.gj;
 
 import java.io.BufferedReader;
 import java.io.IOException;

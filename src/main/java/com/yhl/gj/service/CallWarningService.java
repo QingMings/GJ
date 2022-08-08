@@ -7,7 +7,7 @@ import com.yhl.gj.param.OrderRequest;
 
 public interface CallWarningService {
 
-    Response<Integer> call(OrderRequest request);
+    Response call(OrderRequest request);
 
     Response<Integer> executeTask(Task task, JSONObject param);
 

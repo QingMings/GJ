@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yhl.gj.commons.constant.PyLogType;
+import com.yhl.gj.commons.constant.QueuesConstants;
 import com.yhl.gj.model.Log;
 import com.yhl.gj.service.CallWarningService;
 import com.yhl.gj.service.LogService;
@@ -77,6 +78,7 @@ public class PyLogProcessComponent {
         }
         // 保存日志到数据库
         logService.saveBatch(logs);
+        sendSysLogToMQ(logs);
         // 次目标告警结果收集
         JSONArray target_Orbit_GJ_events = new JSONArray();
         // 搜集结果
@@ -113,23 +115,28 @@ public class PyLogProcessComponent {
                 case "140":  // 写入相对位置关系描点数据文件 完成
                     JSONObject positionFile = JSON.parseObject(l.getLogDetail());
                     JSONObject detailObject = positionFile.getJSONObject(Detail);
-                    if (!detailObject.isEmpty()){
-                        detailObject.forEach((k,v) -> {
+                    if (!detailObject.isEmpty()) {
+                        detailObject.forEach((k, v) -> {
                             JSONObject positionObject = detailObject.getJSONObject(k);
-                            if (positionObject.containsKey(before)){
-                                positionHandle(positionObject,before);
+                            if (positionObject.containsKey(before)) {
+                                positionHandle(positionObject, before);
                             }
-                            if (positionObject.containsKey(after)){
-                                positionHandle(positionObject,after);
+                            if (positionObject.containsKey(after)) {
+                                positionHandle(positionObject, after);
                             }
                         });
                     }
-                    resultCollect.put("position_relation",detailObject);
+                    resultCollect.put("position_relation", detailObject);
                     break;
                 case "150":
                     JSONObject max_GJ = JSON.parseObject(l.getLogDetail());
                     JSONObject maxDetail = max_GJ.getJSONObject(Detail);
                     resultCollect.put(MAX_GJ, maxDetail);
+                    break;
+
+                case "151":
+                    JSONObject detail_151 = JSON.parseObject(l.getLogDetail());
+                    rabbitTemplate.convertAndSend(QueuesConstants.WARN_REPORT_EXCHANGE, QueuesConstants.WARN_REPORT_ROUTE_KEY, detail_151);
                     break;
             }
         });
@@ -137,30 +144,37 @@ public class PyLogProcessComponent {
         callWarningService.updateTaskStrategy(resultCollect, logTrackId);
     }
 
-    private void positionHandle(JSONObject positionObject,String key){
+    private void sendSysLogToMQ(List<Log> logs) {
+        logs.forEach(l -> {
+            JSONObject detail = JSON.parseObject(l.getLogDetail());
+            rabbitTemplate.convertAndSend(QueuesConstants.SYS_LOG_ADD_EXCHANGE, QueuesConstants.SYS_LOG_ADD_ROUTE_KEY, detail);
+        });
+    }
+
+    private void positionHandle(JSONObject positionObject, String key) {
         String content = FileUtil.readUtf8String(positionObject.getString(key));
         JSONObject contentObject = JSON.parseObject(content);
-         JSONArray pointsJsonArray = contentObject.getJSONArray("points");
+        JSONArray pointsJsonArray = contentObject.getJSONArray("points");
         List<BigDecimal[]> chart1dataList = new ArrayList<>();
-        List<BigDecimal>  chart2dataList = new ArrayList<>();
+        List<BigDecimal> chart2dataList = new ArrayList<>();
         List<String> chart2utcList = new ArrayList<>();
-         pointsJsonArray.forEach(o -> {
-             JSONObject point = (JSONObject) o;
-             BigDecimal[] pointArray = new BigDecimal[]{point.getBigDecimal("dt"),point.getBigDecimal("ds")};
-             chart1dataList.add(pointArray);
-             chart2dataList.add(point.getBigDecimal("dist"));
-             chart2utcList.add(point.getString("utc"));
-         });
-         JSONObject output = new JSONObject();
-         output.put("satid_p",contentObject.getIntValue("satid_p"));
-         output.put("satid_s",contentObject.getIntValue("satid_s"));
-         output.put("chart1",chart1dataList.toArray());
-         JSONObject chart2 = new JSONObject();
-         chart2.put("x",chart2utcList.toArray());
-         chart2.put("y",chart2dataList.toArray());
-         output.put("chart2",chart2);
+        pointsJsonArray.forEach(o -> {
+            JSONObject point = (JSONObject) o;
+            BigDecimal[] pointArray = new BigDecimal[]{point.getBigDecimal("dt"), point.getBigDecimal("ds")};
+            chart1dataList.add(pointArray);
+            chart2dataList.add(point.getBigDecimal("dist"));
+            chart2utcList.add(point.getString("utc"));
+        });
+        JSONObject output = new JSONObject();
+        output.put("satid_p", contentObject.getIntValue("satid_p"));
+        output.put("satid_s", contentObject.getIntValue("satid_s"));
+        output.put("chart1", chart1dataList.toArray());
+        JSONObject chart2 = new JSONObject();
+        chart2.put("x", chart2utcList.toArray());
+        chart2.put("y", chart2dataList.toArray());
+        output.put("chart2", chart2);
 
-        positionObject.put(key,output);
+        positionObject.put(key, output);
     }
 
     private Log createPyLog(Matcher m, String model, String logTrackId) {

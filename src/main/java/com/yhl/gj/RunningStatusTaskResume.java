@@ -30,8 +30,10 @@ import static com.yhl.gj.commons.constant.Constants.FINISHED;
 @Component
 public class RunningStatusTaskResume implements CommandLineRunner {
 
-    @Value("${task.enableResume}")
+    @Value("${task.enableResumeTask}")
     private boolean enableResume;
+    @Value("${task.enableOrderTask}")
+    private Boolean enableOrderTask;
     @Value("${task.finishedFileFlag}")
     private String taskFinishedFileFlag;
     @Value("${task.period}")
@@ -59,6 +61,7 @@ public class RunningStatusTaskResume implements CommandLineRunner {
         log.info("------程序启动成功------");
         log.info("------任务结束文件标志：{}------", taskFinishedFileFlag);
         log.info("------任务运行时间间隔(ms)：{}-----",taskPeriod);
+        log.info("------运行模式为:{}",enableOrderTask? "OrderTask模式(Timer定时执行任务，直到收到任务结束标志)":"RabbitMQ 触发模式（触发一次，执行一次任务）" );
     }
 
     private void resumeTasks(List<Task> needResumeTasks) {

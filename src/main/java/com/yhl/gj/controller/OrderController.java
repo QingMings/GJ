@@ -23,7 +23,7 @@ public class OrderController {
      * 程序根据磁盘路径生成订单数据。
      */
     @PostMapping("/executeTask")
-    public Response<Integer> callFromCURL(@RequestBody @Valid OrderRequest request) {
+    public Response callFromCURL(@RequestBody @Valid OrderRequest request) {
         return callWarningService.call(request);
     }
 

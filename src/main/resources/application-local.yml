@@ -56,7 +56,7 @@ spring:
     username: hzgj
     password: hzgj123456
 #    host: 192.168.43.244
-    host: 192.168.43.244
+    host: 192.168.43.236
     port: 5672
     virtual-host: hzgj
     listener:
@@ -76,8 +76,8 @@ mybatis-plus:
     banner: off
   configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-#    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
-    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+#    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
 # mybatis 分页插件
 pagehelper:
   auto-dialect: true
@@ -113,7 +113,8 @@ pyLog:
 
 #=================task相关配置===============
 task:
-  enableResume: true                         # 程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
+  enableResumeTask: true                         # (timer定时扫描文件夹方式)程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
+  enableOrderTask: true                        # (timer 定时扫描文件夹方式) 提交任务后，是否开启定时扫描任务，开始后，按 period 设置，定时扫描，关闭后，默认执行一次
   finishedFileFlag: "end.txt"                 # 文件夹内任务结束标志，扫描到该文件，则结束任务
   period: 60000                                # 任务运行时间间隔，单位毫秒
   orderRunParam:

@@ -79,5 +79,22 @@ public class RabbitConfig {
         return BindingBuilder.bind(sysLogQueue()).to(sysLogExchange()).with(QueuesConstants.SYS_LOG_ADD_ROUTE_KEY);
     }
 
+    @Bean
+    public DirectExchange warnReportExchange() {
+        return (DirectExchange) ExchangeBuilder.directExchange(QueuesConstants.WARN_REPORT_EXCHANGE).durable(true).build();
+    }
+
+    @Bean
+    public Queue warnReportQueue() {
+        return QueueBuilder.durable(QueuesConstants.WARN_REPORT_QUEUE).build();
+    }
+
+    @Bean
+    public Binding warnReportBinding() {
+        return BindingBuilder.bind(warnReportQueue()).to(warnReportExchange()).with(QueuesConstants.WARN_REPORT_ROUTE_KEY);
+    }
+
+
+
 
 }
