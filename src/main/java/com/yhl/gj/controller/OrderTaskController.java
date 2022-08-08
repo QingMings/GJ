@@ -63,7 +63,7 @@ public class OrderTaskController {
      * 人工重试一次任务，可自定义参数
      */
     @PostMapping("/toRetryTaskUseCustomParam/{taskId}")
-    private Response<Integer> toRetryTaskUseCustomParam(@PathVariable("taskId") Long taskId, @RequestBody CustomParam param) {
+    private Response<Integer> toRetryTaskUseCustomParam(@PathVariable("taskId") Long taskId, @RequestBody @Valid CustomParam param) {
         return taskService.reTryTaskUseCustomParam(taskId, param);
     }
 

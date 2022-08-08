@@ -13,6 +13,7 @@ import com.yhl.gj.model.Log;
 import com.yhl.gj.service.CallWarningService;
 import com.yhl.gj.service.LogService;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,8 @@ public class PyLogProcessComponent {
 
     @Resource
     private Pattern pyLogRegexPattern;
+    @Resource
+    private Pattern warnReportRegexPattern;
     @Resource
     private LogService logService;
     @Resource
@@ -133,22 +136,27 @@ public class PyLogProcessComponent {
                     JSONObject maxDetail = max_GJ.getJSONObject(Detail);
                     resultCollect.put(MAX_GJ, maxDetail);
                     break;
-
-                case "151":
-                    JSONObject detail_151 = JSON.parseObject(l.getLogDetail());
-                    rabbitTemplate.convertAndSend(QueuesConstants.WARN_REPORT_EXCHANGE, QueuesConstants.WARN_REPORT_ROUTE_KEY, detail_151);
-                    break;
             }
         });
 
         callWarningService.updateTaskStrategy(resultCollect, logTrackId);
     }
 
+    public void code151Handle(String pylog, String logTrackId,String model){
+       Matcher matcher =  warnReportRegexPattern.matcher(pylog);
+       if (!matcher.find()){
+           return;
+       }
+       log.info("warn report to mq :{}",logTrackId);
+        Log logInfo = createPyLog151(matcher, model, logTrackId);
+        rabbitTemplate.convertAndSend(QueuesConstants.WARN_REPORT_EXCHANGE, QueuesConstants.WARN_REPORT_ROUTE_KEY, logInfo.getLogDetail());
+    }
+
     private void sendSysLogToMQ(List<Log> logs) {
-        logs.forEach(l -> {
-            JSONObject detail = JSON.parseObject(l.getLogDetail());
-            rabbitTemplate.convertAndSend(QueuesConstants.SYS_LOG_ADD_EXCHANGE, QueuesConstants.SYS_LOG_ADD_ROUTE_KEY, detail);
-        });
+        logs.forEach(l -> rabbitTemplate.convertAndSend(
+                QueuesConstants.SYS_LOG_ADD_EXCHANGE,
+                QueuesConstants.SYS_LOG_ADD_ROUTE_KEY,
+                l.getLogDetail()));
     }
 
     private void positionHandle(JSONObject positionObject, String key) {
@@ -177,11 +185,16 @@ public class PyLogProcessComponent {
         positionObject.put(key, output);
     }
 
-    private Log createPyLog(Matcher m, String model, String logTrackId) {
+    private Log createPyLog151(Matcher m, String model, String logTrackId){
         String logType = m.group(1);
         String logTime = m.group(2);
-        String logCode = m.group(3);
-        String logDetails = m.group(4);
+        String logCode = "151";
+        String logDetails = m.group(3);
+        return getLog(model, logTrackId, logType, logTime, logCode, logDetails);
+    }
+
+    @NotNull
+    private Log getLog(String model, String logTrackId, String logType, String logTime, String logCode, String logDetails) {
         Log logInfo = new Log();
         logInfo.setOrderType(model);
         logInfo.setCode(logCode);
@@ -190,5 +203,13 @@ public class PyLogProcessComponent {
         logInfo.setLogType(logType);
         logInfo.setTrackId(logTrackId);
         return logInfo;
+    }
+
+    private Log createPyLog(Matcher m, String model, String logTrackId) {
+        String logType = m.group(1);
+        String logTime = m.group(2);
+        String logCode = m.group(3);
+        String logDetails = m.group(4);
+        return getLog(model, logTrackId, logType, logTime, logCode, logDetails);
     }
 }

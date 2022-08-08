@@ -107,6 +107,7 @@ pyCmd:
 #日志正则匹配(处理)
 pyLog:
   regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\] \[code=(\d+)\] (.+)'
+  warn_report_regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\] \[code=151] (.+)'
 
 
 

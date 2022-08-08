@@ -19,4 +19,11 @@ public interface QueuesConstants {
     String WARN_REPORT_EXCHANGE= "warn_report_exchange";
     String WARN_REPORT_QUEUE= "warn_report_queue";
     String WARN_REPORT_ROUTE_KEY= "warn_report_route_key";
+
+    /**
+     * 触发执行一次任务
+     */
+    String TASK_TRIGGER_EXCHANGE = "task_trigger_exchange";
+    String TASK_TRIGGER_QUEUE = "task_trigger_queue";
+    String TASK_TRIGGER_ROUTE_KEY = "task_trigger_route_key";
 }

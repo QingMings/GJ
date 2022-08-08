@@ -12,35 +12,28 @@ import java.math.BigDecimal;
 public class CustomParam {
     @NotNull
     // -判断门限/依据配置文件
-    private Gates gates;
+    private Thresholds thresholds;
     // 预警时间区间
     @NotNull
-    private TimeSpan timeSpan;
+    private Double time_span_days;
     // 公共参数：跳秒
     @NotNull
-    private String param_LEAP;
+    private String path_leap;
     // 公共参数：极移
     @NotNull
-    private String param_EOP;
+    private String path_eop;
     // 公共参数：大气环境
     @NotNull
-    private String param_SWD;
+    private String path_swd;
     // 预报误差参数
-    private String param_ERR;
+    @NotNull
+    private String path_error;
 
 
-
-    //预警时间区间
-    @Data
-    public class TimeSpan {
-        // 时间区间
-        @NotNull
-        private Double days;
-    }
 
     // -判断门限/依据配置文件
     @Data
-    public class Gates {
+    public class Thresholds {
         // 直线距离告警门限[米]
         @NotNull
         private BigDecimal gate_dr ;
@@ -53,5 +46,12 @@ public class CustomParam {
         // 碰撞概率判断门限[无量纲].
         @NotNull
         private BigDecimal gate_pc;
+        // 连续激光照射功率
+        @NotNull
+        private BigDecimal thr_las_ctn_dur;
+        @NotNull
+        private BigDecimal thr_las_ctn_level_0;
+        @NotNull
+        private BigDecimal thr_las_ctn_level_1;
     }
 }

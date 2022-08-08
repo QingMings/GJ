@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class CallWarningProgramTask extends Thread {
@@ -34,12 +35,13 @@ public class CallWarningProgramTask extends Thread {
     public void run() {
         log.info("run callWarningProgramTask:{} ",logTrackId);
         StopWatch stopWatch = new StopWatch(logTrackId);
-        stopWatch.start();
+
         Process proc = null;
         try {
             ProcessBuilder pb = new ProcessBuilder(cmdArray);
             pb.redirectErrorStream(true);
             pb.directory(workDir);
+            stopWatch.start("执行任务:"+logTrackId);
             proc = pb.start();
             String encoding = SystemUtil.getOsInfo().isWindows()? "gbk": "utf-8";
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(), encoding));
@@ -47,8 +49,12 @@ public class CallWarningProgramTask extends Thread {
             String line;
             while ((line = in.readLine()) != null) {
                 pylogs.add(line);
+                logProcessComponent.code151Handle(line,logTrackId,model);
             }
+            stopWatch.stop();
+            stopWatch.start("日志处理:"+logTrackId);
             logProcessComponent.pythonLogHandle(pylogs, logTrackId, model);
+            stopWatch.stop();
             in.close();
             proc.waitFor();
         } catch (Exception e) {
@@ -58,8 +64,8 @@ public class CallWarningProgramTask extends Thread {
                 proc.destroy();
             }
         }
-        stopWatch.stop();
-        log.info("end callWarningProgramTask :{},耗時：{}",logTrackId,stopWatch.getLastTaskTimeMillis());
+
+        log.info("end callWarningProgramTask :{},\n耗時：{}",logTrackId,stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
     }
     // 处理 python 输出的日志
 
