@@ -34,6 +34,8 @@ public class RunningStatusTaskResume implements CommandLineRunner {
     private boolean enableResume;
     @Value("${task.enableOrderTask}")
     private Boolean enableOrderTask;
+    @Value("${pyScript.usePoolVersion}")
+    private boolean usePoolVersion;
     @Value("${task.finishedFileFlag}")
     private String taskFinishedFileFlag;
     @Value("${task.period}")
@@ -49,7 +51,7 @@ public class RunningStatusTaskResume implements CommandLineRunner {
     public void run(String... args)  {
         started();
         if (!ObjectUtil.defaultIfNull(enableResume,true)) {
-            log.info("-----任务恢复已暂停，不会恢复数据库中标志为运行中的任务-----");
+            log.info("------任务恢复已暂停，不会恢复数据库中标志为运行中的任务-----");
             return;
         }
         List<Task> needResumeTasks = taskService.queryRunningTasks();
@@ -61,7 +63,8 @@ public class RunningStatusTaskResume implements CommandLineRunner {
         log.info("------程序启动成功------");
         log.info("------任务结束文件标志：{}------", taskFinishedFileFlag);
         log.info("------任务运行时间间隔(ms)：{}-----",taskPeriod);
-        log.info("------运行模式为:{}",enableOrderTask? "OrderTask模式(Timer定时执行任务，直到收到任务结束标志)":"RabbitMQ 触发模式（触发一次，执行一次任务）" );
+        log.info("------任务运行模式为:{}",enableOrderTask? "OrderTask模式(Timer定时执行任务，直到收到任务结束标志)":"RabbitMQ 触发模式（触发一次，执行一次任务）" );
+        log.info("------py运行耗时为：{}",usePoolVersion? "多线程模式":"单线程模式");
     }
 
     private void resumeTasks(List<Task> needResumeTasks) {

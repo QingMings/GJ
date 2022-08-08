@@ -11,9 +11,12 @@ import java.net.MalformedURLException;
 @Component
 public class PyWorkDirConfig {
 
-
+    @Value("${pyScript.usePoolVersion}")
+    private  boolean usePoolVersion;
     @Value("${pyScript.pyWorkDir}")
     private String pyWorkDir;
+    @Value("${pyScript.pyPoolWorkDir}")
+    private String  pyPoolWorkDir;
 
     /**
      * py脚本工作目录
@@ -21,5 +24,10 @@ public class PyWorkDirConfig {
     @Bean
     public Resource pyWorkDir() throws MalformedURLException {
         return new FileUrlResource(pyWorkDir);
+    }
+
+    @Bean
+    public Resource pyPoolWorkDir() throws MalformedURLException {
+        return new FileUrlResource(pyPoolWorkDir);
     }
 }

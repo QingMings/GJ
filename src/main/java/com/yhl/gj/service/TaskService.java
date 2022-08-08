@@ -3,7 +3,7 @@ package com.yhl.gj.service;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yhl.gj.commons.base.Response;
-import com.yhl.gj.dto.CustomParam;
+import com.yhl.gj.service.impl.dto.CustomParam;
 import com.yhl.gj.model.Task;
 import com.yhl.gj.param.ChooseDetailRequest;
 import com.yhl.gj.param.OrderRequest;

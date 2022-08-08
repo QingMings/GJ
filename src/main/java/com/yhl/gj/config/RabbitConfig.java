@@ -1,6 +1,7 @@
 package com.yhl.gj.config;
 
 import com.yhl.gj.commons.constant.QueuesConstants;
+import com.yhl.gj.config.convert.FastJsonMessageConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
@@ -52,7 +53,8 @@ public class RabbitConfig {
 
     @Bean
     public MessageConverter messageConverter() {
-        return new ContentTypeDelegatingMessageConverter(new Jackson2JsonMessageConverter());
+//        return new ContentTypeDelegatingMessageConverter(new Jackson2JsonMessageConverter());
+        return new ContentTypeDelegatingMessageConverter(new FastJsonMessageConverter());
     }
 
     @Bean

@@ -25,9 +25,9 @@ public class TaskTrigger {
     @Resource
     private TaskService taskService;
 
-    @RabbitListener(bindings = @QueueBinding(exchange = @Exchange(value = QueuesConstants.WARN_REPORT_EXCHANGE, type = "direct"),
-            value = @Queue(value = QueuesConstants.WARN_REPORT_QUEUE, durable = "true"),
-            key = QueuesConstants.WARN_REPORT_ROUTE_KEY))
+    @RabbitListener(bindings = @QueueBinding(exchange = @Exchange(value = QueuesConstants.TASK_TRIGGER_EXCHANGE, type = "direct"),
+            value = @Queue(value = QueuesConstants.TASK_TRIGGER_QUEUE, durable = "true"),
+            key = QueuesConstants.TASK_TRIGGER_ROUTE_KEY))
     @RabbitHandler
     public void taskTrigger(String msg, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         try {

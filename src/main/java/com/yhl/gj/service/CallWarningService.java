@@ -18,5 +18,5 @@ public interface CallWarningService {
     void updateTaskStrategy(JSONObject resultCollect, String logTrackId);
 
 
-
+    void updateTaskWarnLevel(JSONObject maxDetail, String logTrackId);
 }

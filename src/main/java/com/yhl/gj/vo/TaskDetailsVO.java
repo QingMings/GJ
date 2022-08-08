@@ -27,6 +27,7 @@ public class TaskDetailsVO {
     private Integer taskType;
     @JSONField(serialize = false)
     private String  strategyStr;
+    private String  targetDetails;
     // 规避策略
     private JSONObject strategy;
 

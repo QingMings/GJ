@@ -15,8 +15,23 @@ public class PyLogRegexConfig {
     @Value("${pyLog.regex_pattern}")
     private String regexPattern;
 
+    @Value("${pyLog.warn_report_regex_pattern}")
+    private String warnReportRegexPattern;
+
+    @Value("${pyLog.max_warn_level_regex_pattern}")
+    private String maxWarnLevelRegexPattern;
+
     @Bean
     public Pattern pyLogRegexPattern() {
         return Pattern.compile(regexPattern);
+    }
+    @Bean
+    public Pattern warnReportRegexPattern() {
+        return Pattern.compile(warnReportRegexPattern);
+    }
+
+    @Bean
+    public Pattern maxWarnLevelRegexPattern() {
+        return Pattern.compile(maxWarnLevelRegexPattern);
     }
 }

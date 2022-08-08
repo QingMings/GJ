@@ -1,4 +1,4 @@
-package com.yhl.gj.dto;
+package com.yhl.gj.service.impl.dto;
 
 import lombok.Data;
 

@@ -2,8 +2,8 @@ package com.yhl.gj.component;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -12,7 +12,10 @@ import com.yhl.gj.commons.constant.QueuesConstants;
 import com.yhl.gj.model.Log;
 import com.yhl.gj.service.CallWarningService;
 import com.yhl.gj.service.LogService;
+import com.yhl.gj.vo.ErrLogVo;
+import com.yhl.gj.vo.LogVo;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +39,11 @@ public class PyLogProcessComponent {
 
     @Resource
     private Pattern pyLogRegexPattern;
+    @Resource
+    private Pattern warnReportRegexPattern;
+
+    @Resource
+    private Pattern maxWarnLevelRegexPattern;
     @Resource
     private LogService logService;
     @Resource
@@ -70,9 +78,11 @@ public class PyLogProcessComponent {
         for (String pylog : pylogs) {
             Matcher m = pyLogRegexPattern.matcher(pylog);
             if (!m.find()) {
+                errorSendToMQ(pylog,logTrackId);
                 log.error(pylog);
                 continue;
             }
+//            log.info(pylog);
             Log logInfo = createPyLog(m, model, logTrackId);
             logs.add(logInfo);
         }
@@ -133,22 +143,73 @@ public class PyLogProcessComponent {
                     JSONObject maxDetail = max_GJ.getJSONObject(Detail);
                     resultCollect.put(MAX_GJ, maxDetail);
                     break;
-
-                case "151":
-                    JSONObject detail_151 = JSON.parseObject(l.getLogDetail());
-                    rabbitTemplate.convertAndSend(QueuesConstants.WARN_REPORT_EXCHANGE, QueuesConstants.WARN_REPORT_ROUTE_KEY, detail_151);
-                    break;
             }
         });
 
         callWarningService.updateTaskStrategy(resultCollect, logTrackId);
     }
 
+    public void errorSendToMQ(String pylog, String logTrackId) {
+        ErrLogVo errLogVo = new ErrLogVo();
+        errLogVo.setLogTime(DateUtil.date());
+        errLogVo.setTrackId(logTrackId);
+        errLogVo.setErrorInfo(pylog);
+        rabbitTemplate.convertAndSend(
+                QueuesConstants.SYS_LOG_ADD_EXCHANGE,
+                QueuesConstants.SYS_LOG_ADD_ROUTE_KEY,
+                JSON.toJSONString(errLogVo));
+    }
+
+    /**
+     * 将code=151发送到mq
+     */
+    public void code151Handle(String pylog, String logTrackId, String model) {
+        Matcher matcher = warnReportRegexPattern.matcher(pylog);
+        if (!matcher.find()) {
+            return;
+        }
+        log.info("warn report 150  to mq :{}", logTrackId);
+        Log logInfo = createPyLog151(matcher, model, logTrackId);
+        LogVo logVo = convertToLogVO(logInfo);
+        rabbitTemplate.convertAndSend(QueuesConstants.WARN_REPORT_EXCHANGE, QueuesConstants.WARN_REPORT_ROUTE_KEY, logVo);
+    }
+
+    /**
+     * 150输出时候，先去更新数据库告警等级字段，
+     */
+    public void code150Handle(String pylog, String logTrackId, String model) {
+        Matcher matcher = maxWarnLevelRegexPattern.matcher(pylog);
+        if (!matcher.find()) {
+            return;
+        }
+
+        Log logInfo = createPyLog151(matcher, model, logTrackId);
+        JSONObject max_GJ = JSON.parseObject(logInfo.getLogDetail());
+        JSONObject maxDetail = max_GJ.getJSONObject(Detail);
+        try {
+
+        callWarningService.updateTaskWarnLevel(maxDetail,logTrackId);
+        }catch (Exception e){
+            log.error("handle code 150 error: {}",e.getMessage());
+        }
+
+    }
+    /**
+     * 将运行日志发送到mq
+     */
     private void sendSysLogToMQ(List<Log> logs) {
         logs.forEach(l -> {
-            JSONObject detail = JSON.parseObject(l.getLogDetail());
-            rabbitTemplate.convertAndSend(QueuesConstants.SYS_LOG_ADD_EXCHANGE, QueuesConstants.SYS_LOG_ADD_ROUTE_KEY, detail);
+
+            LogVo logVo = convertToLogVO(l);
+            rabbitTemplate.convertAndSend(
+                    QueuesConstants.SYS_LOG_ADD_EXCHANGE,
+                    QueuesConstants.SYS_LOG_ADD_ROUTE_KEY,
+                    JSON.toJSONString(logVo));
         });
+    }
+
+    private LogVo convertToLogVO(Log l) {
+        return new LogVo(l.getTrackId(),l.getOrderType(),l.getLogDetail(),l.getLogType(),l.getLogTime(),l.getCode());
     }
 
     private void positionHandle(JSONObject positionObject, String key) {
@@ -177,11 +238,30 @@ public class PyLogProcessComponent {
         positionObject.put(key, output);
     }
 
-    private Log createPyLog(Matcher m, String model, String logTrackId) {
+    /**
+     * 为code=151创建日志
+     */
+    private Log createPyLog151(Matcher m, String model, String logTrackId) {
         String logType = m.group(1);
         String logTime = m.group(2);
-        String logCode = m.group(3);
-        String logDetails = m.group(4);
+        String logCode = "151";
+        String logDetails = m.group(3);
+        return getLog(model, logTrackId, logType, logTime, logCode, logDetails);
+    }
+
+    /**
+     * 为code=150创建日志
+     */
+    private Log createPyLog150(Matcher m, String model, String logTrackId) {
+        String logType = m.group(1);
+        String logTime = m.group(2);
+        String logCode = "150";
+        String logDetails = m.group(3);
+        return getLog(model, logTrackId, logType, logTime, logCode, logDetails);
+    }
+
+    @NotNull
+    private Log getLog(String model, String logTrackId, String logType, String logTime, String logCode, String logDetails) {
         Log logInfo = new Log();
         logInfo.setOrderType(model);
         logInfo.setCode(logCode);
@@ -191,4 +271,14 @@ public class PyLogProcessComponent {
         logInfo.setTrackId(logTrackId);
         return logInfo;
     }
+
+    private Log createPyLog(Matcher m, String model, String logTrackId) {
+        String logType = m.group(1);
+        String logTime = m.group(2);
+        String logCode = m.group(3);
+        String logDetails = m.group(4);
+        return getLog(model, logTrackId, logType, logTime, logCode, logDetails);
+    }
+
+
 }

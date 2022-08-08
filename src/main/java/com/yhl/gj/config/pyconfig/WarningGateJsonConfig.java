@@ -14,16 +14,16 @@ import java.io.File;
 import java.io.IOException;
 
 // 配置文件默认值注入
-@Component
-public class WarningGateJsonConfig {
-    @Value("${pyConfig.warning_gates_path}")
-    private String warningGatesPath;
-
-    @Bean
-    private JSONObject warningGates() throws IOException {
-        Resource resource = new FileUrlResource(warningGatesPath);
-        File warningGatesFile = FileUtil.file(resource.getFile());
-        String jsonStr = FileUtil.readUtf8String(warningGatesFile);
-        return JSONObject.parseObject(jsonStr);
-    }
-}
+//@Component
+//public class WarningGateJsonConfig {
+//    @Value("${pyConfig.warning_gates_path}")
+//    private String warningGatesPath;
+//
+//    @Bean
+//    private JSONObject warningGates() throws IOException {
+//        Resource resource = new FileUrlResource(warningGatesPath);
+//        File warningGatesFile = FileUtil.file(resource.getFile());
+//        String jsonStr = FileUtil.readUtf8String(warningGatesFile);
+//        return JSONObject.parseObject(jsonStr);
+//    }
+//}

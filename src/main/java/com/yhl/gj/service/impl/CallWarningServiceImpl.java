@@ -1,7 +1,6 @@
 package com.yhl.gj.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
@@ -20,7 +19,7 @@ import com.yhl.gj.component.PyLogProcessComponent;
 import com.yhl.gj.config.pyconfig.OrderRunParamConfig;
 import com.yhl.gj.config.pyconfig.PyCmdParamConfig;
 import com.yhl.gj.config.pyconfig.PyInputFileSuffixConfig;
-import com.yhl.gj.dto.RadarFileDto;
+import com.yhl.gj.service.impl.dto.RadarFileDto;
 import com.yhl.gj.model.Config;
 import com.yhl.gj.model.Task;
 import com.yhl.gj.model.TaskDetails;
@@ -76,8 +75,13 @@ public class CallWarningServiceImpl implements CallWarningService {
     private PyLogProcessComponent pyLogProcessComponent;
     @Resource
     private PyCmdParamConfig pyCmdParamConfig;
+
+    @Value("${pyScript.usePoolVersion}")
+    private  boolean usePoolVersion;
     @Resource
-    private org.springframework.core.io.Resource pyWork;
+    private org.springframework.core.io.Resource pyWorkDir;
+    @Resource
+    private org.springframework.core.io.Resource pyPoolWorkDir;
     @Value("${pyScript.outputPath}")
     private String pyOutputPath;
     @Resource
@@ -208,7 +212,8 @@ public class CallWarningServiceImpl implements CallWarningService {
      * @param model 运行模式，true 为 数据驱动模式，false是用户传参模式
      */
     private CallWarningProgramTask createCallWarningProgramTask(String runParamPath, String trackId, boolean model) throws IOException {
-        return new CallWarningProgramTask(buildCmd(runParamPath), pyLogProcessComponent, pyWork.getFile(), trackId, model ? CallPyModel.DATA_DRIVER : CallPyModel.USER_FACE);
+            File workDir = usePoolVersion? pyPoolWorkDir.getFile(): pyWorkDir.getFile();
+        return new CallWarningProgramTask(buildCmd(runParamPath), pyLogProcessComponent, workDir, trackId, model ? CallPyModel.DATA_DRIVER : CallPyModel.USER_FACE);
     }
 
     /**
@@ -275,9 +280,10 @@ public class CallWarningServiceImpl implements CallWarningService {
     }
 
     private String[] buildCmd(String runParamPath) {
-        List<String> cmd = pyCmdParamConfig.getCmd();
+        List<String> cmd = usePoolVersion? pyCmdParamConfig.getPoolCmd():pyCmdParamConfig.getCmd();
         List<String> cloneCmd = ObjectUtil.clone(cmd);
         cloneCmd.add(runParamPath);
+        log.info("call py params : [{}]",JSON.toJSONString(cloneCmd.toArray()));
         return cloneCmd.toArray(new String[0]);
     }
 
@@ -348,6 +354,14 @@ public class CallWarningServiceImpl implements CallWarningService {
             task.setMaxWarnLevel(lv > historyMaxLV ? lv : historyMaxLV);
             // 威胁等级
             taskDetails.setWarnLevel(lv);
+            if (resultCollect.containsKey("strategy")){
+                JSONObject strategyValue = resultCollect.getJSONObject("strategy");
+                if (ObjectUtil.isNotNull(strategyValue)){
+                    String movesCount = strategyValue.getString("moves_count");
+                    taskDetails.setTargetDetails(movesCount);
+                }
+
+            }
             // 威胁来源
             taskDetails.setMenaceSource("orbit".equals(type) ? "轨道接近" : "激光照射");
         }
@@ -355,6 +369,38 @@ public class CallWarningServiceImpl implements CallWarningService {
         taskDetails.setStrategy(resultCollect.toJSONString());
         taskService.updateById(task);
         detailsService.updateById(taskDetails);
+    }
+
+
+    @Override
+    public void updateTaskWarnLevel(JSONObject maxDetail, String logTrackId) {
+        Assert.notNull(logTrackId, "logTrackId 不可为空");
+        // 1. 得到taskId 和 detailsId
+        String[] split = logTrackId.split(StrUtil.UNDERLINE);
+        Assert.isTrue(split.length == 2, "logTrackId 不符合规则 :taskId_detailID");
+        Long taskId = Long.valueOf(split[0]);
+        Long detailId = Long.valueOf(split[1]);
+        Task task = taskService.getById(taskId);
+        TaskDetails taskDetails = detailsService.getById(detailId);
+        Assert.notNull(task, "根据 taskId：{} 未找到数据", taskId);
+        Assert.notNull(taskDetails, "根据 detailId:{} 未找到数据 ", detailId);
+        if (ObjectUtil.isNotNull(maxDetail)){
+            String type = maxDetail.getString("type");
+            Integer lv = maxDetail.getIntValue("lv");
+            // 设置当前等级
+            task.setCurWarnLevel(lv);
+            // 设置历史最高等级
+            Integer historyMaxLV = task.getMaxWarnLevel();
+            task.setMaxWarnLevel(lv > historyMaxLV ? lv : historyMaxLV);
+            // 威胁等级
+            taskDetails.setWarnLevel(lv);
+            // 威胁来源
+            taskDetails.setMenaceSource("orbit".equals(type) ? "轨道接近" : "激光照射");
+            taskService.updateById(task);
+            detailsService.updateById(taskDetails);
+            log.info("code 150 处理结束");
+        }
+
     }
 
     /**

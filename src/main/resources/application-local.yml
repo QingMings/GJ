@@ -19,7 +19,7 @@ spring:
     druid:
       driver-class-name: com.oscar.Driver
       #      url: jdbc:oscar://192.168.1.14:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
-      url: jdbc:oscar://192.168.43.236:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+      url: jdbc:oscar://192.168.189.9:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
 #      url: jdbc:oscar://192.168.0.103:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
       #      username: SYSDBA
       username: DSUSER
@@ -56,7 +56,7 @@ spring:
     username: hzgj
     password: hzgj123456
 #    host: 192.168.43.244
-    host: 192.168.43.236
+    host: 192.168.189.9
     port: 5672
     virtual-host: hzgj
     listener:
@@ -87,34 +87,39 @@ pagehelper:
 
 # python 程序相关配置
 pyScript:
+  usePoolVersion: true      #     是否使用线程池版本
   # 脚本工作目录
   pyWorkDir: warningProgram/core
+  # 多线程模式
+  pyPoolWorkDir: warningProgram/core_pool
   # 主脚本
   path: warning_main.py
+  poolPath: warning_main_pool.py
   outputPath: ./output/
-pyConfig:
-  warning_gates_path: warningProgram/core/param/G20210101_warning_gates.json
-  c_lib_param_path: warningProgram/core/settings/c_lib_param.json
+
 # 配置参数的存放路径，读取路径下的json和txt文件路径，供前端浏览选择
 paramDirConfig:
-  paramLEAP_Path: /Users/shishifanbuxie/FTP/temp
-  paramEOP_Path: /Users/shishifanbuxie/FTP/local
-  paramSWD_Path: /Users/shishifanbuxie/FTP/displayPlaybackslist
-  paramERR_Path: /Users/shishifanbuxie/FTP/2021-03-26
+  paramLEAP_Path: E:\\1A_2022_liangpnghui\\GJ\\GjDist0808_release\\warningProgram\\param_path\\paramLEAP_Path
+  paramEOP_Path: E:\\1A_2022_liangpnghui\\GJ\\GjDist0808_release\\warningProgram\\param_path\\paramEOP_Path
+  paramSWD_Path: E:\\1A_2022_liangpnghui\\GJ\\GjDist0808_release\\warningProgram\\param_path\\paramSWD_Path
+  paramERR_Path: E:\\1A_2022_liangpnghui\\GJ\\GjDist0808_release\\warningProgram\\param_path\\paramERR_Path
 #!!!==加上参数u让脚本实时输出==!!!
 pyCmd:
   param_list: python3,-u,${pyScript.path}
+  param_pool_list:  python3,-u,${pyScript.poolPath}
 #日志正则匹配(处理)
 pyLog:
-  regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\] \[code=(\d+)\] (.+)'
+  regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\]\[code=(\d+)\](.+)'
+  warn_report_regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\]\[code=151](.+)'
+  max_warn_level_regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\]\[code=150](.+)'
 
 
 
 
 #=================task相关配置===============
 task:
-  enableResumeTask: true                         # (timer定时扫描文件夹方式)程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
-  enableOrderTask: true                        # (timer 定时扫描文件夹方式) 提交任务后，是否开启定时扫描任务，开始后，按 period 设置，定时扫描，关闭后，默认执行一次
+  enableResumeTask: false                         # (timer定时扫描文件夹方式)程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
+  enableOrderTask: false                        # (timer 定时扫描文件夹方式) 提交任务后，是否开启定时扫描任务，开始后，按 period 设置，定时扫描，关闭后，默认执行一次
   finishedFileFlag: "end.txt"                 # 文件夹内任务结束标志，扫描到该文件，则结束任务
   period: 60000                                # 任务运行时间间隔，单位毫秒
   orderRunParam:

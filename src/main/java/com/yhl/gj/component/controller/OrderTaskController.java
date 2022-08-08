@@ -1,9 +1,8 @@
-package com.yhl.gj.controller;
+package com.yhl.gj.component.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yhl.gj.commons.base.Response;
-import com.yhl.gj.dto.CustomParam;
-import com.yhl.gj.model.TaskDetails;
+import com.yhl.gj.service.impl.dto.CustomParam;
 import com.yhl.gj.param.ChooseDetailRequest;
 import com.yhl.gj.param.TaskDetailsQueryRequest;
 import com.yhl.gj.param.TaskQueryRequest;
@@ -63,7 +62,7 @@ public class OrderTaskController {
      * 人工重试一次任务，可自定义参数
      */
     @PostMapping("/toRetryTaskUseCustomParam/{taskId}")
-    private Response<Integer> toRetryTaskUseCustomParam(@PathVariable("taskId") Long taskId, @RequestBody CustomParam param) {
+    private Response<Integer> toRetryTaskUseCustomParam(@PathVariable("taskId") Long taskId, @RequestBody @Valid CustomParam param) {
         return taskService.reTryTaskUseCustomParam(taskId, param);
     }
 

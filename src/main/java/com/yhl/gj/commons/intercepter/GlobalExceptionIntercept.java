@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -123,6 +124,17 @@ public class GlobalExceptionIntercept {
 		omsResponse.setMessage(sb.toString());
 		omsResponse.setCode(ErrorEnum.PARAM_ERROR.getErrorCode());
 
+		log.error("参数或者实体类异常", ex);
+		return new ResponseEntity<>(omsResponse, HttpStatus.OK);
+	}
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<Response<Object>>  handleHttpMessageNotReadableException(HttpServletRequest req, HttpMessageNotReadableException ex){
+		ex.printStackTrace();
+		String requestUrl = req.getRequestURL().toString();
+		Response<Object> omsResponse = new Response<>();
+		omsResponse.setSuccess(Constants.FAIL);
+		omsResponse.setMessage(ex.getCause().getMessage());
+		omsResponse.setCode(ErrorEnum.PARAM_ERROR.getErrorCode());
 		log.error("参数或者实体类异常", ex);
 		return new ResponseEntity<>(omsResponse, HttpStatus.OK);
 	}

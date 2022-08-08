@@ -12,8 +12,15 @@ public class PyCmdParamConfig {
 
     @Value("#{'${pyCmd.param_list}'.split(',')}")
     private List<String> cmd;
+    @Value("#{'${pyCmd.param_pool_list}'.split(',')}")
+    private List<String> poolCmd;
 
     public List<String> getCmd() {
         return cmd;
+    }
+
+
+    public List<String> getPoolCmd() {
+        return poolCmd;
     }
 }

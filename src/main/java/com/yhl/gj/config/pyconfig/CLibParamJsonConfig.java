@@ -10,16 +10,16 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-@Component
-public class CLibParamJsonConfig {
-    @Value("${pyConfig.c_lib_param_path}")
-    private String cLibParamPath;
-
-    @Bean
-    private JSONObject clibParam() throws IOException {
-        Resource resource = new FileUrlResource(cLibParamPath);
-        File warningGatesFile = FileUtil.file(resource.getFile());
-        String jsonStr = FileUtil.readUtf8String(warningGatesFile);
-        return JSONObject.parseObject(jsonStr);
-    }
-}
+//@Component
+//public class CLibParamJsonConfig {
+//    @Value("${pyConfig.c_lib_param_path}")
+//    private String cLibParamPath;
+//
+//    @Bean
+//    private JSONObject clibParam() throws IOException {
+//        Resource resource = new FileUrlResource(cLibParamPath);
+//        File warningGatesFile = FileUtil.file(resource.getFile());
+//        String jsonStr = FileUtil.readUtf8String(warningGatesFile);
+//        return JSONObject.parseObject(jsonStr);
+//    }
+//}

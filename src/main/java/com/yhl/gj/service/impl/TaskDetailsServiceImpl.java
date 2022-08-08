@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yhl.gj.commons.base.Response;
-import com.yhl.gj.dto.LastTaskDetailsDTO;
+import com.yhl.gj.service.impl.dto.LastTaskDetailsDTO;
 import com.yhl.gj.mapper.TaskDetailsMapper;
 import com.yhl.gj.model.TaskDetails;
 import com.yhl.gj.param.TaskDetailsQueryRequest;
@@ -46,7 +46,7 @@ public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskD
         PageHelper.startPage(request.getCurrentPage(), request.getPageSize());
         List<TaskDetailsVO> taskDetailsVOList = baseMapper.queryTaskDetailsByTaskId(request);
         // 将json字符串转json对象
-        taskDetailsVOList.forEach(t -> t.setStrategy(JSON.parseObject(t.getStrategyStr())));
+//        taskDetailsVOList.forEach(t -> t.setStrategy(JSON.parseObject(t.getStrategyStr())));
         PageInfo<TaskDetailsVO> pageInfo = PageInfo.of(taskDetailsVOList);
         return Response.buildSucc(pageInfo);
     }

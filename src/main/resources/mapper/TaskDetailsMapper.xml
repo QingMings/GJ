@@ -22,12 +22,13 @@
     TARGET_DETAILS, STRATEGY, CREATE_TIME
   </sql>
 
-    <select id="queryListTaskDetailByTaskIds" resultType="com.yhl.gj.dto.LastTaskDetailsDTO">
+    <select id="queryListTaskDetailByTaskIds" resultType="com.yhl.gj.service.impl.dto.LastTaskDetailsDTO">
         select max(GTD.ID)          as id,
                GTD.TASK_ID          as taskId,
                max(GTD.CREATE_TIME) as createTime
         from HZGJ.GJ_TASK_DETAILS GTD
         <where>
+            GTD.WARN_LEVEL != -1 and
             GTD.TASK_ID in
             <foreach close=")" collection="taskIds" item="item" open="(" separator=",">
                 #{item}
@@ -45,7 +46,8 @@
                TASK_NAME,
                WARN_LEVEL,
                MENACE_SOURCE,
-               TASK_TYPE
+               TASK_TYPE,
+        TARGET_DETAILS
         from HZGJ.GJ_TASK_DETAILS
         <where>
             TASK_ID = #{request.taskId}

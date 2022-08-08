@@ -1,4 +1,4 @@
-package com.yhl.gj.controller;
+package com.yhl.gj.component.controller;
 
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.param.UserLoginRequest;
