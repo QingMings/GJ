@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yhl.gj.commons.base.Response;
-import com.yhl.gj.service.impl.dto.LastTaskDetailsDTO;
+import com.yhl.gj.dto.LastTaskDetailsDTO;
 import com.yhl.gj.mapper.TaskDetailsMapper;
 import com.yhl.gj.model.TaskDetails;
 import com.yhl.gj.param.TaskDetailsQueryRequest;

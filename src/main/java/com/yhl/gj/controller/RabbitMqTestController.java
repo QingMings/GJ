@@ -1,4 +1,4 @@
-package com.yhl.gj.component.controller;
+package com.yhl.gj.controller;
 
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.commons.constant.QueuesConstants;

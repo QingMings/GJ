@@ -19,7 +19,7 @@ import com.yhl.gj.component.PyLogProcessComponent;
 import com.yhl.gj.config.pyconfig.OrderRunParamConfig;
 import com.yhl.gj.config.pyconfig.PyCmdParamConfig;
 import com.yhl.gj.config.pyconfig.PyInputFileSuffixConfig;
-import com.yhl.gj.service.impl.dto.RadarFileDto;
+import com.yhl.gj.dto.RadarFileDto;
 import com.yhl.gj.model.Config;
 import com.yhl.gj.model.Task;
 import com.yhl.gj.model.TaskDetails;

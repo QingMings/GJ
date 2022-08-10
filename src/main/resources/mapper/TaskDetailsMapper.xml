@@ -22,7 +22,7 @@
     TARGET_DETAILS, STRATEGY, CREATE_TIME
   </sql>
 
-    <select id="queryListTaskDetailByTaskIds" resultType="com.yhl.gj.service.impl.dto.LastTaskDetailsDTO">
+    <select id="queryListTaskDetailByTaskIds" resultType="com.yhl.gj.dto.LastTaskDetailsDTO">
         select max(GTD.ID)          as id,
                GTD.TASK_ID          as taskId,
                max(GTD.CREATE_TIME) as createTime

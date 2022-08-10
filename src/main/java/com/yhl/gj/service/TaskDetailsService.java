@@ -2,7 +2,7 @@ package com.yhl.gj.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yhl.gj.commons.base.Response;
-import com.yhl.gj.service.impl.dto.LastTaskDetailsDTO;
+import com.yhl.gj.dto.LastTaskDetailsDTO;
 import com.yhl.gj.model.TaskDetails;
 import com.yhl.gj.param.TaskDetailsQueryRequest;
 import com.yhl.gj.vo.TaskDetailsVO;

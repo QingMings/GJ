@@ -1,8 +1,8 @@
-package com.yhl.gj.component.controller;
+package com.yhl.gj.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yhl.gj.commons.base.Response;
-import com.yhl.gj.service.impl.dto.CustomParam;
+import com.yhl.gj.dto.CustomParam;
 import com.yhl.gj.param.ChooseDetailRequest;
 import com.yhl.gj.param.TaskDetailsQueryRequest;
 import com.yhl.gj.param.TaskQueryRequest;
