@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.yhl.gj.commons.constant.PyLogType;
 import com.yhl.gj.commons.constant.QueuesConstants;
 import com.yhl.gj.model.Log;
@@ -157,7 +158,7 @@ public class PyLogProcessComponent {
         rabbitTemplate.convertAndSend(
                 QueuesConstants.SYS_LOG_ADD_EXCHANGE,
                 QueuesConstants.SYS_LOG_ADD_ROUTE_KEY,
-                JSON.toJSONString(errLogVo));
+                convertTojson(errLogVo));
     }
 
     /**
@@ -171,9 +172,15 @@ public class PyLogProcessComponent {
         log.info("warn report 150  to mq :{}", logTrackId);
         Log logInfo = createPyLog151(matcher, model, logTrackId);
         LogVo logVo = convertToLogVO(logInfo);
-        rabbitTemplate.convertAndSend(QueuesConstants.WARN_REPORT_EXCHANGE, QueuesConstants.WARN_REPORT_ROUTE_KEY, logVo);
+        rabbitTemplate.convertAndSend(QueuesConstants.WARN_REPORT_EXCHANGE,
+                QueuesConstants.WARN_REPORT_ROUTE_KEY,
+                convertTojson(logVo));
     }
 
+
+    private String convertTojson(Object object){
+        return JSON.toJSONStringWithDateFormat(object,"yyyy-MM-dd HH:mm:ss.SSS", SerializerFeature.WriteDateUseDateFormat);
+    }
     /**
      * 150输出时候，先去更新数据库告警等级字段，
      */
@@ -204,7 +211,7 @@ public class PyLogProcessComponent {
             rabbitTemplate.convertAndSend(
                     QueuesConstants.SYS_LOG_ADD_EXCHANGE,
                     QueuesConstants.SYS_LOG_ADD_ROUTE_KEY,
-                    JSON.toJSONString(logVo));
+                    convertTojson(logVo));
         });
     }
 
@@ -215,6 +222,8 @@ public class PyLogProcessComponent {
     private void positionHandle(JSONObject positionObject, String key) {
         String content = FileUtil.readUtf8String(positionObject.getString(key));
         JSONObject contentObject = JSON.parseObject(content);
+        positionObject.put(key,contentObject);
+        /*
         JSONArray pointsJsonArray = contentObject.getJSONArray("points");
         List<BigDecimal[]> chart1dataList = new ArrayList<>();
         List<BigDecimal> chart2dataList = new ArrayList<>();
@@ -236,6 +245,8 @@ public class PyLogProcessComponent {
         output.put("chart2", chart2);
 
         positionObject.put(key, output);
+
+         */
     }
 
     /**
