@@ -2,6 +2,7 @@ package com.yhl.gj;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.net.NetUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.yhl.gj.model.Task;
 import com.yhl.gj.service.CallWarningService;
@@ -13,9 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +32,7 @@ import static com.yhl.gj.commons.constant.Constants.FINISHED;
  * 用于恢复程序异常退出后停止执行的任务
  */
 @Slf4j
-@Component
+//@Component
 public class RunningStatusTaskResume implements CommandLineRunner {
 
     @Value("${task.enableResumeTask}")
@@ -46,6 +51,8 @@ public class RunningStatusTaskResume implements CommandLineRunner {
     private TaskDetailsService taskDetailsService;
     @Resource
     private CallWarningService callWarningService;
+    @Resource
+    private Environment environment;
 
     @Override
     public void run(String... args)  {
@@ -61,6 +68,9 @@ public class RunningStatusTaskResume implements CommandLineRunner {
     }
     private void started(){
         log.info("------程序启动成功------");
+
+        log.info("------IP: "+ NetUtil.getLocalhost().getHostAddress());
+        log.info("------PORT: "+environment.getProperty("server.port"));
         log.info("------任务结束文件标志：{}------", taskFinishedFileFlag);
         log.info("------任务运行时间间隔(ms)：{}-----",taskPeriod);
         log.info("------任务运行模式为:{}",enableOrderTask? "OrderTask模式(Timer定时执行任务，直到收到任务结束标志)":"RabbitMQ 触发模式（触发一次，执行一次任务）" );

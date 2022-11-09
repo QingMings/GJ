@@ -21,7 +21,7 @@ import java.util.List;
 
 import static com.yhl.gj.commons.constant.Constants.*;
 
-@Service
+//@Service
 public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskDetails> implements TaskDetailsService {
 
     @Resource
@@ -45,6 +45,7 @@ public class TaskDetailsServiceImpl extends ServiceImpl<TaskDetailsMapper, TaskD
     public Response queryTaskDetailsByTaskId(TaskDetailsQueryRequest request) {
         PageHelper.startPage(request.getCurrentPage(), request.getPageSize());
         List<TaskDetailsVO> taskDetailsVOList = baseMapper.queryTaskDetailsByTaskId(request);
+
         // 将json字符串转json对象
 //        taskDetailsVOList.forEach(t -> t.setStrategy(JSON.parseObject(t.getStrategyStr())));
         PageInfo<TaskDetailsVO> pageInfo = PageInfo.of(taskDetailsVOList);

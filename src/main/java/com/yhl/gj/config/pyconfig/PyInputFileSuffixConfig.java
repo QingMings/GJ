@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Data
-@Component
+//@Component
 public class PyInputFileSuffixConfig {
 
     // 卫星轨道文件后缀

@@ -14,14 +14,14 @@ spring:
     timeout-per-shutdown-phase: 10s
   config:
     activate:
-      on-profile: local
+      on-profile: prod
   datasource:
     druid:
       driver-class-name: com.oscar.Driver
       #      url: jdbc:oscar://192.168.1.14:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
       url: jdbc:oscar://192.168.31.213:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
-#      url: jdbc:oscar://192.168.1.7:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
-#      url: jdbc:oscar://192.168.0.103:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+      #      url: jdbc:oscar://192.168.1.7:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+      #      url: jdbc:oscar://192.168.0.103:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
       #      username: SYSDBA
       username: DSUSER
       #      password: szoscar55
@@ -56,9 +56,9 @@ spring:
   rabbitmq:
     username: hzgj
     password: hzgj123456
-#    host: 192.168.43.244
+    #    host: 192.168.43.244
     host: 192.168.31.213
-#    host: 192.168.1.7
+    #    host: 192.168.1.7
     port: 5672
     virtual-host: hzgj
     listener:
@@ -85,19 +85,6 @@ pagehelper:
   auto-dialect: true
 
 
-
-
-# python 程序相关配置
-pyScript:
-  usePoolVersion: false      #     是否使用线程池版本
-  # 脚本工作目录
-  pyWorkDir: warningProgram/core
-  # 多线程模式
-  pyPoolWorkDir: warningProgram/core_pool
-  # 主脚本
-  path: warning_main.py
-  poolPath: warning_main_pool.py
-  outputPath: ./output/
 # v3版本
 pyScriptV3:
   pyV3WorkDir: warningProgram/core-v3/
@@ -107,60 +94,9 @@ pyScriptV3:
     createDirByDay: true                           # 是否按天分文件夹  如果是，则 savePath = warningProgram/historyRunParam/2022-08-01 这种
     createDirByTask: true # 是否按任务分文件夹  如果是  则savePath = warningProgram/historyRunParam/任务xx 这种，如果按天也开了，savePath=warningProgram/historyRunParam/2022-08-01/任务xx 这种
 
-# 配置参数的存放路径，读取路径下的json和txt文件路径，供前端浏览选择
-paramDirConfig:
-  paramLEAP_Path: E:\\1A_2022_liangpnghui\\GJ\\GjDist0808_release\\warningProgram\\param_path\\paramLEAP_Path
-  paramEOP_Path: E:\\1A_2022_liangpnghui\\GJ\\GjDist0808_release\\warningProgram\\param_path\\paramEOP_Path
-  paramSWD_Path: E:\\1A_2022_liangpnghui\\GJ\\GjDist0808_release\\warningProgram\\param_path\\paramSWD_Path
-  paramERR_Path: E:\\1A_2022_liangpnghui\\GJ\\GjDist0808_release\\warningProgram\\param_path\\paramERR_Path
 #!!!==加上参数u让脚本实时输出==!!!
 pyCmd:
-  param_list: python3,-u,${pyScript.path}
-  param_pool_list:  python3,-u,${pyScript.poolPath}
   paramV3_list: python3,-u,${pyScriptV3.path}
-#日志正则匹配(处理)
-pyLog:
-  regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\]\[code=(\d+)\](.+)'
-  warn_report_regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\]\[code=151](.+)'
-  max_warn_level_regex_pattern: '\[(.+) @ (\d+-\d+-\d+ \d+:\d+:\d+.\d+)\]\[code=150](.+)'
-
-
-
-
-#=================task相关配置===============
-task:
-  enableResumeTask: false                         # (timer定时扫描文件夹方式)程序重启后是否恢复执行之前的任务,默认执行，设置 false 不执行
-  enableOrderTask: false                        # (timer 定时扫描文件夹方式) 提交任务后，是否开启定时扫描任务，开始后，按 period 设置，定时扫描，关闭后，默认执行一次
-  finishedFileFlag: "end.txt"                 # 文件夹内任务结束标志，扫描到该文件，则结束任务
-  period: 60000                                # 任务运行时间间隔，单位毫秒
-  orderRunParam:
-    savePath: warningProgram/historyRunParam     # 订单运行参数保存路径
-    createDirByDay: true                           # 是否按天分文件夹  如果是，则 savePath = warningProgram/historyRunParam/2022-08-01 这种
-    createDirByTask: true                       # 是否按任务分文件夹  如果是  则savePath = warningProgram/historyRunParam/任务xx 这种，如果按天也开了，savePath=warningProgram/historyRunParam/2022-08-01/任务xx 这种
-  defaultParam: # 默认参数
-    flushToDBOnStart: true                   # 程序启动时，是否刷新数据库中的默认配置
-    #    path: config/defaultParam.json            # 默认配置路径(部署)
-    path: defaultParam.json            # 默认配置路径(开发)
-
-
-# (inputFiles)输入文件后缀配置
-suffixFilter:
-  # 主卫星输入文件后缀
-  satelliteFile: sat
-  # 目标轨道数据文件后缀
-  targetOrbit: obt
-  # 目标雷达轨道文件后缀
-  targetRadar: rae
-  # 目标激光数据文件后缀
-  targetLaser: las
-  # 观测质量评估
-  obs_GTW: GTW
-  obs_EPH: txt
-
-# 测试订单数据（测试用，给定指定时间）
-testOrder:
-  enable: true
-  startUTC: 2020, 11, 28, 00, 00, 00
 
 # 基础服务通用接口
 loginConfig:

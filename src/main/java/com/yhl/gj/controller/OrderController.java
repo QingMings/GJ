@@ -1,5 +1,7 @@
 package com.yhl.gj.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.param.OrderRequest;
 import com.yhl.gj.service.CallWarningService;
@@ -11,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
-@RestController
-@RequestMapping("/api")
+//@RestController
+//@RequestMapping("/api")
 public class OrderController {
 
     @Resource
@@ -26,7 +28,6 @@ public class OrderController {
     public Response callFromCURL(@RequestBody @Valid OrderRequest request) {
         return callWarningService.call(request);
     }
-
 
 
 

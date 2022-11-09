@@ -7,13 +7,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+//@Component
 public class PyCmdParamConfig {
 
     @Value("#{'${pyCmd.param_list}'.split(',')}")
     private List<String> cmd;
     @Value("#{'${pyCmd.param_pool_list}'.split(',')}")
     private List<String> poolCmd;
+
+
 
     public List<String> getCmd() {
         return cmd;
@@ -23,4 +25,6 @@ public class PyCmdParamConfig {
     public List<String> getPoolCmd() {
         return poolCmd;
     }
+
+
 }

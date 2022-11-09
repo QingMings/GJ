@@ -14,7 +14,7 @@ import javax.annotation.Resource;
  */
 @Order(1)
 @Slf4j
-@Component
+//@Component
 public class InitCompetition implements CommandLineRunner {
     @Value("${task.defaultParam.flushToDBOnStart}")
     private boolean flushDefaultConfigToDB;

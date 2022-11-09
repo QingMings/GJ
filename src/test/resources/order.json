@@ -1,0 +1,198 @@
+{
+  "summary": [
+    {
+      "level": 1,
+      "utc": "2022-11-03 19:51:46.724",
+      "target_id": "",
+      "detail": "激光综合告警等级1. 脉冲照射: 等级1 (频率6686Hz). ",
+      "type": "laser"
+    },
+    {
+      "level": 1,
+      "utc": "2022-11-03 19:51:46.827",
+      "target_id": "",
+      "detail": "激光综合告警等级1. 持续照射: 等级1 (照射强度4615)",
+      "type": "laser"
+    },
+    {
+      "level": 2,
+      "utc": "2022-11-03 19:51:47.042",
+      "target_id": "",
+      "detail": "激光综合告警等级2. 脉冲照射: 等级1 (频率1396Hz). 持续照射: 等级1 (照射强度6285)",
+      "type": "laser"
+    },
+    {
+      "level": 3,
+      "utc": "2022-11-03 19:51:47.152",
+      "target_id": "",
+      "detail": "激光综合告警等级3. 脉冲照射: 等级1 (频率6886Hz). 持续照射: 等级2 (照射强度11995)",
+      "type": "laser"
+    },
+    {
+      "level": 1,
+      "utc": "2022-11-03 19:51:47.369",
+      "target_id": "",
+      "detail": "激光综合告警等级1. 脉冲照射: 等级1 (频率4706Hz). ",
+      "type": "laser"
+    },
+    {
+      "level": 2,
+      "utc": "2022-11-03 19:51:47.478",
+      "target_id": "",
+      "detail": "激光综合告警等级2. 持续照射: 等级2 (照射强度11285)",
+      "type": "laser"
+    },
+    {
+      "level": 3,
+      "utc": "2022-11-03 19:51:47.590",
+      "target_id": "",
+      "detail": "激光综合告警等级3. 脉冲照射: 等级1 (频率4296Hz). 持续照射: 等级2 (照射强度8445)",
+      "type": "laser"
+    },
+    {
+      "level": 1,
+      "utc": "2022-11-03 19:51:47.699",
+      "target_id": "",
+      "detail": "激光综合告警等级1. 脉冲照射: 等级1 (频率1426Hz). ",
+      "type": "laser"
+    },
+    {
+      "level": 1,
+      "utc": "2022-11-03 19:52:10.955",
+      "target_id": "",
+      "detail": "激光综合告警等级1. 持续照射: 等级1 (照射强度6275)",
+      "type": "laser"
+    },
+    {
+      "level": 1,
+      "utc": "2022-11-03 19:52:11.066",
+      "target_id": "",
+      "detail": "激光综合告警等级1. 脉冲照射: 等级1 (频率5856Hz). ",
+      "type": "laser"
+    },
+    {
+      "level": 1,
+      "utc": "2022-11-03 19:52:11.282",
+      "target_id": "",
+      "detail": "激光综合告警等级1. 脉冲照射: 等级1 (频率9576Hz). ",
+      "type": "laser"
+    },
+    {
+      "level": 3,
+      "utc": "2022-11-03 19:52:11.500",
+      "target_id": "",
+      "detail": "激光综合告警等级3. 脉冲照射: 等级1 (频率6756Hz). 持续照射: 等级2 (照射强度8775)",
+      "type": "laser"
+    },
+    {
+      "level": 2,
+      "utc": "2022-11-03 19:52:11.609",
+      "target_id": "",
+      "detail": "激光综合告警等级2. 持续照射: 等级2 (照射强度9775)",
+      "type": "laser"
+    },
+    {
+      "level": 2,
+      "utc": "2022-11-03 19:52:11.719",
+      "target_id": "",
+      "detail": "激光综合告警等级2. 脉冲照射: 等级1 (频率5596Hz). 持续照射: 等级1 (照射强度4385)",
+      "type": "laser"
+    },
+    {
+      "level": 3,
+      "utc": "2020-11-30 06:37:14.51",
+      "target_id": 46611,
+      "detail": "目标距离: dS=-1.106km dT=-27.111km dW=0.265km; 目标直线距离: dR=27.135km; 碰撞概率: 0.000000; ",
+      "type": "orbit"
+    },
+    {
+      "level": 3,
+      "utc": "2020-11-28 06:29:49.35",
+      "target_id": 46612,
+      "detail": "目标距离: dS=-0.565km dT=-44.748km dW=0.242km; 目标直线距离: dR=44.752km; 碰撞概率: 0.000000; ",
+      "type": "orbit"
+    }
+  ],
+  "orbit_echarts": {
+    "46611": {
+      "before": "./DiskArray/GEOGJ/N202209181234//L3/GJXX//BACKEND/N20220829000601_mv_before_p9701_s46611.json",
+      "after": "./DiskArray/GEOGJ/N202209181234//L3/GJXX//BACKEND/N20220829000601_mv_after_p9701_s46611.json"
+    },
+    "46612": {
+      "before": "./DiskArray/GEOGJ/N202209181234//L3/GJXX//BACKEND/N20220829000601_mv_before_p9701_s46612.json",
+      "after": "./DiskArray/GEOGJ/N202209181234//L3/GJXX//BACKEND/N20220829000601_mv_after_p9701_s46612.json"
+    }
+  },
+  "task_status": "working",
+  "moves": {
+    "moves": [
+      {
+        "vecdv_t": [
+          -0.9464
+        ],
+        "utc": "2020-11-28 00:00:00.0000",
+        "vecv_minus": [
+          262.553477,
+          -3064.261865,
+          -12.719668
+        ],
+        "vecr": [
+          -41979400.021,
+          -3587435.743,
+          -1316173.894
+        ],
+        "type": 1
+      }
+    ],
+    "moves_count": 1,
+    "delta_v_all": 0.9464
+  },
+  "laser_echarts": "./DiskArray/GEOGJ/N202209181234//L3/GJXX//BACKEND/N20220829000601_laser.json",
+  "overall": [
+    {
+      "level": 3,
+      "utc": "2022-11-03 19:52:11.500",
+      "target_id": "",
+      "detail": "激光综合告警等级3. 脉冲照射: 等级1 (频率6756Hz). 持续照射: 等级2 (照射强度8775)",
+      "type": "laser"
+    },
+    {
+      "level": 3,
+      "utc": "2020-11-28 06:29:49.35",
+      "target_id": "46612",
+      "detail": "目标距离: dS=-0.565km dT=-44.748km dW=0.242km; 目标直线距离: dR=44.752km; 碰撞概率: 0.000000; ",
+      "type": "orbit"
+    }
+  ],
+  "order": {
+    "output": "./DiskArray/GEOGJ/N202209181234//L3/GJXX/",
+    "input": {
+      "path_input_root": "./DiskArray/path/"
+    },
+    "task": {
+      "productLevel": "L3",
+      "satelliteID": "GYZH0B",
+      "priority": "5",
+      "order_id": "N20220829000601",
+      "scan_interval": 10
+    },
+    "params": {
+      "time_span_days": 5,
+      "time_start_utc": "2020-11-28 00:00:00",
+      "path_eop": "./DiskArray/ROOT/AUXDATA/EOP/EOP.txt",
+      "time_end_utc": "2020-12-03 00:00:00",
+      "path_leap": "./DiskArray/ROOT/AUXDATA/EOP/EOP.txt",
+      "path_swd": "./DiskArray/ROOT/AUXDATA/SRF/SRF.DAT.txt",
+      "thresholds": {
+        "gate_etca": 4.0,
+        "gate_dSTW": [
+          20000.0,
+          50000.0,
+          50000.0
+        ],
+        "gate_dr": 50000.0,
+        "gate_pc": 0.0001
+      }
+    }
+  }
+}

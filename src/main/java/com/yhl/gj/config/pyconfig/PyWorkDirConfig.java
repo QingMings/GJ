@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 
-@Component
+//@Component
 public class PyWorkDirConfig {
 
     @Value("${pyScript.usePoolVersion}")

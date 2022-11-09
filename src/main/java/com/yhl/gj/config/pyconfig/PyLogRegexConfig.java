@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component
+//@Component
 public class PyLogRegexConfig {
     @Value("${pyLog.regex_pattern}")
     private String regexPattern;

@@ -1,10 +1,12 @@
 package com.yhl.gj.config;
 
+import com.yhl.gj.interceptor.JWTInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -15,6 +17,17 @@ import java.util.List;
  */
 @Configuration
 public class ResourceConfig implements WebMvcConfigurer {
+
+
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        //注册拦截器JWTInterceptor，对用户名密码登入进行权限验证
+//        registry.addInterceptor(new JWTInterceptor())
+//                //指定拦截器注册拦截器JWTInterceptor要拦截的请求(支持*通配符)
+//                .addPathPatterns("/**")
+//                //指定拦截器JWTInterceptor不拦截的请求(支持*通配符)
+//                .excludePathPatterns("/sys/userLogin","sys/loginOut");
+//    }
 
     /**
      * 配置跨域
@@ -45,6 +58,8 @@ public class ResourceConfig implements WebMvcConfigurer {
         converters.add(0,new ByteArrayHttpMessageConverter());
     }
 
+    /*
+
     @Value("${paramDirConfig.paramLEAP_Path}")
     private String paramLEAP_Path;
     @Value("${paramDirConfig.paramEOP_Path}")
@@ -61,4 +76,6 @@ public class ResourceConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/param/SWT/**").addResourceLocations("file:"+paramSWD_Path);
         registry.addResourceHandler("/param/ERR/**").addResourceLocations("file:"+paramERR_Path);
     }
+    */
+
 }

@@ -66,7 +66,7 @@ import static cn.hutool.core.date.DatePattern.PURE_DATETIME_FORMAT;
 import static com.yhl.gj.commons.constant.Constants.*;
 
 @Slf4j
-@Service
+//@Service
 public class CallWarningServiceImpl implements CallWarningService {
     ThreadFactory callWarningThreadFactory = new CustomizableThreadFactory("call-warning-thread-pool-");
     ExecutorService executorService = Executors.newCachedThreadPool(callWarningThreadFactory);

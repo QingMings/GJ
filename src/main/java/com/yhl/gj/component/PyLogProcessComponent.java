@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 import static com.yhl.gj.commons.constant.Constants.*;
 
 @Slf4j
-@Component
+//@Component
 public class PyLogProcessComponent {
 
     @Resource

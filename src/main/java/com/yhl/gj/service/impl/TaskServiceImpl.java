@@ -40,7 +40,7 @@ import static com.yhl.gj.commons.constant.Constants.*;
 import static com.yhl.gj.commons.enums.ResultEnum.DIR_NOT_EXISTS;
 import static com.yhl.gj.commons.enums.ResultEnum.TASK_ALREADY_RUNNING_ERROR;
 
-@Service
+//@Service
 public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements TaskService {
 
     @Resource

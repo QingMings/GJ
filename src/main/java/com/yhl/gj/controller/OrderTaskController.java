@@ -16,8 +16,8 @@ import javax.validation.Valid;
 import java.io.File;
 import java.util.List;
 
-@RestController
-@RequestMapping("/orderTask")
+//@RestController
+//@RequestMapping("/orderTask")
 public class OrderTaskController {
 
     @Resource
