@@ -4,9 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.param.ResultQueryRequest;
-import com.yhl.gj.vo.TaskVO;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
+
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yhl.gj.mapper.TaskResultMapper;
