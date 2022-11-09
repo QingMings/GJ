@@ -12,5 +12,9 @@ public interface TaskResultService extends IService<TaskResult> {
     Response queryResultByCondition(ResultQueryRequest request);
 
 
+    Response getOneWithBlobs(Long id);
+
+    Response getSatellites();
 }
+
 

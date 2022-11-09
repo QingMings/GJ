@@ -1,61 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yhl.gj.mapper.TaskResultMapper">
-  <resultMap id="BaseResultMap" type="com.yhl.gj.model.TaskResult">
-    <!--@mbg.generated-->
-    <!--@Table HZGJ.GJ_TASK_RESULT-->
-    <id column="ID" jdbcType="BIGINT" property="id" />
-    <result column="ORDER_ID" jdbcType="VARCHAR" property="orderId" />
-    <result column="TASK_STATUS" jdbcType="VARCHAR" property="taskStatus" />
-    <result column="SCAN_INTERVAL" jdbcType="BIGINT" property="scanInterval" />
-    <result column="CUR_WARN_LEVEL" jdbcType="INTEGER" property="curWarnLevel" />
-    <result column="CUR_WARN_TYPE" jdbcType="VARCHAR" property="curWarnType" />
-    <result column="P_ID" jdbcType="BIGINT" property="pId" />
-    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
-    <result column="WORK_PATH" jdbcType="VARCHAR" property="workPath" />
-    <result column="OUTPUT_PATH" jdbcType="VARCHAR" property="outputPath" />
-    <result column="SATELLITE_ID" jdbcType="VARCHAR" property="satelliteId" />
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yhl.gj.model.TaskResult">
-    <!--@mbg.generated-->
-    <!--@Table HZGJ.GJ_TASK_RESULT-->
-    <result column="ORDER" jdbcType="CLOB" property="order" />
-    <result column="STRATEGY" jdbcType="CLOB" property="strategy" />
-    <result column="CHART" jdbcType="CLOB" property="chart" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    ID, ORDER_ID, TASK_STATUS, SCAN_INTERVAL, CUR_WARN_LEVEL, CUR_WARN_TYPE, P_ID, CREATE_DATE, 
-    WORK_PATH, OUTPUT_PATH, SATELLITE_ID
-  </sql>
-  <sql id="Blob_Column_List">
-    <!--@mbg.generated-->
-    "ORDER", STRATEGY, CHART
-  </sql>
+    <resultMap id="BaseResultMap" type="com.yhl.gj.model.TaskResult">
+        <!--@mbg.generated-->
+        <!--@Table HZGJ.GJ_TASK_RESULT-->
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="ORDER_ID" jdbcType="VARCHAR" property="orderId"/>
+        <result column="TASK_STATUS" jdbcType="VARCHAR" property="taskStatus"/>
+        <result column="SCAN_INTERVAL" jdbcType="BIGINT" property="scanInterval"/>
+        <result column="ORBIT_WARN_LEVEL" jdbcType="INTEGER" property="orbitWarnLevel"/>
+        <result column="LASER_WARN_LEVEL" jdbcType="INTEGER" property="laserWarnLevel"/>
+        <result column="P_ID" jdbcType="BIGINT" property="pId"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="WORK_PATH" jdbcType="VARCHAR" property="workPath"/>
+        <result column="OUTPUT_PATH" jdbcType="VARCHAR" property="outputPath"/>
+        <result column="SATELLITE_ID" jdbcType="VARCHAR" property="satelliteId"/>
+        <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yhl.gj.model.TaskResult">
+        <!--@mbg.generated-->
+        <!--@Table HZGJ.GJ_TASK_RESULT-->
+        <result column="ORDER" jdbcType="CLOB" property="order"/>
+        <result column="STRATEGY" jdbcType="CLOB" property="strategy"/>
+        <result column="CHART" jdbcType="CLOB" property="chart"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        ID,
+        ORDER_ID,
+        TASK_STATUS,
+        SCAN_INTERVAL,
+        ORBIT_WARN_LEVEL,
+        LASER_WARN_LEVEL,
+        P_ID,
+        CREATE_DATE,
+        WORK_PATH,
+        OUTPUT_PATH,
+        SATELLITE_ID,
+        UPDATE_DATE
+    </sql>
+    <sql id="Blob_Column_List">
+        <!--@mbg.generated-->
+        "ORDER",
+        STRATEGY,
+        CHART
+    </sql>
 
-  <select id="queryTaskResultByCondition" resultMap="BaseResultMap">
-    select
-      <include refid="Base_Column_List"/>
-    from HZGJ.GJ_TASK_RESULT GT
-    <where>
-      <if test="param.startTime != null">
-        and GT.CREATE_DATE &gt;= to_date(#{param.startTime,jdbcType=TIMESTAMP}, 'yyyy-mm-dd hh24:mi:ss')
-      </if>
-      <if test="param.endTime != null">
-        and GT.CREATE_DATE &lt;= to_date(#{param.endTime,jdbcType=TIMESTAMP}, 'yyyy-mm-dd hh24:mi:ss')
-      </if>
-      <if test="param.currentWarnLevel != null  and param.currentWarnLevel.size() > 0">
-        and  (<foreach collection="param.currentWarnLevel" index="index" item="item" separator="or">
-        GT.CUR_WARN_LEVEL = #{item,jdbcType=VARCHAR}
-      </foreach>)
-      </if>
-      <if test="param.taskNames != null  and param.taskNames.size() > 0">
-        and GT.ORDER_ID IN
-        <foreach collection="param.taskNames" item="item" open="(" separator="," close=")">
-          #{item}
-        </foreach>
-      </if>
-    </where>
-    order by GT.CREATE_DATE desc
-  </select>
+    <select id="queryTaskResultByCondition" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from HZGJ.GJ_TASK_RESULT GT
+        <where>
+            <if test="param.startTime != null">
+                and GT.CREATE_DATE &gt;= to_date(#{param.startTime,jdbcType=TIMESTAMP}, 'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <if test="param.endTime != null">
+                and GT.CREATE_DATE &lt;= to_date(#{param.endTime,jdbcType=TIMESTAMP}, 'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <if test="param.orbitWarnLevel != null  and param.orbitWarnLevel.size() &gt; 0">
+                and  (<foreach collection="param.orbitWarnLevel" index="index" item="item" separator="or">
+                GT.ORBIT_WARN_LEVEL = #{item,jdbcType=VARCHAR}
+            </foreach>)
+            </if>
+            <if test="param.laserWarnLevel != null  and param.laserWarnLevel.size() &gt; 0">
+                and  (<foreach collection="param.laserWarnLevel" index="index" item="item" separator="or">
+                GT.ORBIT_WARN_LEVEL = #{item,jdbcType=VARCHAR}
+            </foreach>)
+            </if>
+            <if test="param.satellites != null  and param.satellites.size() &gt; 0">
+                and GT.ORDER_ID IN
+                <foreach close=")" collection="param.satellites" item="item" open="(" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="param.taskStatus != null and param.taskStatus != ''">
+                and GT.TASK_STATUS = #{param.taskStatus}
+            </if>
+            <if test="param.taskType != null and param.taskType != ''">
+                <choose>
+                    <when test="param.taskType == '0'.toString()">
+                        and GT.SCAN_INTERVAL = 0
+                    </when>
+                    <otherwise>
+                        and GT.SCAN_INTERVAL > 0
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="param.tasName != null  and param.tasName != ''">
+                and GT.ORDER_ID like '%'||#{param.tasName}||'%'
+            </if>
+        </where>
+        order by GT.CREATE_DATE desc
+    </select>
+
+    <select id="getOneWithBlobs" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>,
+        <include refid="Blob_Column_List"/>
+        from HZGJ.GJ_TASK_RESULT GT
+        <where>
+            GT.ID = #{id}
+        </where>
+    </select>
+
+    <select id="getSatellites" resultType="java.lang.String">
+        select distinct SATELLITE_ID
+        from HZGJ.GJ_TASK_RESULT GJ
+        where SATELLITE_ID is not null
+    </select>
 </mapper>

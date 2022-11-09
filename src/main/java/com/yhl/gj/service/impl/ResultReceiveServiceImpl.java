@@ -2,8 +2,10 @@ package com.yhl.gj.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.id.NanoId;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -23,16 +25,23 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.yhl.gj.commons.constant.Constants.after;
 import static com.yhl.gj.commons.constant.Constants.before;
@@ -57,6 +66,7 @@ public class ResultReceiveServiceImpl implements ResultReceiveService {
     private RabbitTemplate rabbitTemplate;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Response onReceiveData(JSONObject receiveData) {
         TaskResult taskResult = createTaskResult(receiveData);
         return Response.buildSucc(taskResult.getId());
@@ -86,6 +96,35 @@ public class ResultReceiveServiceImpl implements ResultReceiveService {
     @Override
     public Response queryResultByCondition(ResultQueryRequest request) {
         return taskResultService.queryResultByCondition(request);
+    }
+
+    @Override
+    public Response getOne(Long id) {
+        return taskResultService.getOneWithBlobs(id);
+    }
+
+    @Override
+    public Response listDir(String dir) throws IOException {
+        if (StrUtil.isEmpty(dir)){
+            dir = pyV3WorkDirConfig.getTaskDiskRoot();
+        }
+        Assert.isTrue(dir.startsWith(pyV3WorkDirConfig.getTaskDiskRoot()),"之允许列出 {} 目录下的文件夹",pyV3WorkDirConfig.getTaskDiskRoot());
+        try (Stream<Path> stream = Files.list(Paths.get(dir))) {
+            Set<String> collect = stream
+                    .filter(Files::isDirectory)
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .collect(Collectors.toSet());
+            JSONObject output = new JSONObject();
+            output.put("path",dir);
+            output.put("childDirs",collect);
+            return Response.buildSucc(output);
+        }
+    }
+
+    @Override
+    public Response getSatellites() {
+        return taskResultService.getSatellites();
     }
 
     /**

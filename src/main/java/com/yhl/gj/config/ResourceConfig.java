@@ -58,6 +58,12 @@ public class ResourceConfig implements WebMvcConfigurer {
         converters.add(0,new ByteArrayHttpMessageConverter());
     }
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/DiskArray/**").addResourceLocations("file:E:\\1A_2022_liangpnghui\\GJ\\GJ\\");
+    }
+
+
     /*
 
     @Value("${paramDirConfig.paramLEAP_Path}")

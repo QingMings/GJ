@@ -21,12 +21,27 @@ public class ResultQueryRequest extends BaseParam {
     @NotNull(message = "请输入结束时间")
     private Date endTime;
     /**
-     * 当前告警等级 告警等级 0、1、2、3
+     * 轨道接近告警等级 告警等级 0、1、2、3
      */
-    private List<Integer> currentWarnLevel;
+    private List<Integer> orbitWarnLevel;
 
-    private List<String> taskNames;
+    /**
+     * 激光照射告警等级 告警等级 0、1、2、3
+     */
+    private List<Integer> laserWarnLevel;
+    /**
+     * 卫星名称
+     */
+    private List<String> satellites;
 
+    /**
+     * 任务状态
+     */
+    private String taskStatus;
+    /**
+     * 任务类型
+     */
+    private String taskType;
 
-
+    private String tasName;
 }

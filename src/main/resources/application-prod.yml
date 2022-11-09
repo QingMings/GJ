@@ -93,6 +93,7 @@ pyScriptV3:
     savePath: warningProgram/historyOrderJson   # 手动运行订单
     createDirByDay: true                           # 是否按天分文件夹  如果是，则 savePath = warningProgram/historyRunParam/2022-08-01 这种
     createDirByTask: true # 是否按任务分文件夹  如果是  则savePath = warningProgram/historyRunParam/任务xx 这种，如果按天也开了，savePath=warningProgram/historyRunParam/2022-08-01/任务xx 这种
+  taskDiskRoot: "E:\\1A_2022_liangpnghui\\GJ\\GJ\\warningProgram\\core-v3\\DiskArray"
 
 #!!!==加上参数u让脚本实时输出==!!!
 pyCmd:

@@ -6,6 +6,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.yhl.gj.commons.base.Response;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 @Slf4j
+@Getter
 @Component
 public class PyV3WorkDirConfig {
 
@@ -31,6 +33,9 @@ public class PyV3WorkDirConfig {
     private Boolean  createDirByDay;
     @Value("${pyScriptV3.manualOrder.createDirByTask}")
     private Boolean  createDirByTask;
+    @Value("${pyScriptV3.taskDiskRoot}")
+    private String taskDiskRoot;
+
     @Bean
     public Resource pyV3WorkDir() throws MalformedURLException {
         return new FileUrlResource(pyV3WorkDir);

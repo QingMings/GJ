@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import java.util.Date;
-
 import lombok.Data;
 
 /**
@@ -15,6 +13,8 @@ import lombok.Data;
 @Data
 @TableName(value = "HZGJ.GJ_TASK_RESULT")
 public class TaskResult {
+    public static final String COL_CUR_WARN_LEVEL = "CUR_WARN_LEVEL";
+    public static final String COL_CUR_WARN_TYPE = "CUR_WARN_TYPE";
     /**
      * ID
      */
@@ -40,16 +40,16 @@ public class TaskResult {
     private Long scanInterval;
 
     /**
-     * 当前告警等级 0、1、2、3
+     * 轨道接近当前告警等级 0、1、2、3
      */
-    @TableField(value = "CUR_WARN_LEVEL")
-    private Integer curWarnLevel;
+    @TableField(value = "ORBIT_WARN_LEVEL")
+    private Integer orbitWarnLevel;
 
     /**
-     * 当前告警类型  laser 激光告警、orbit  轨道接近
+     * 激光告警当前告警等级 0、1、2、3
      */
-    @TableField(value = "CUR_WARN_TYPE")
-    private String curWarnType;
+    @TableField(value = "LASER_WARN_LEVEL")
+    private Integer laserWarnLevel;
 
     /**
      * 父级ID
@@ -82,6 +82,12 @@ public class TaskResult {
     private String satelliteId;
 
     /**
+     * 更新时间
+     */
+    @TableField(value = "UPDATE_DATE")
+    private Date updateDate;
+
+    /**
      * 订单内容
      */
     @TableField(value = "\"ORDER\"")
@@ -107,9 +113,9 @@ public class TaskResult {
 
     public static final String COL_SCAN_INTERVAL = "SCAN_INTERVAL";
 
-    public static final String COL_CUR_WARN_LEVEL = "CUR_WARN_LEVEL";
+    public static final String COL_ORBIT_WARN_LEVEL = "ORBIT_WARN_LEVEL";
 
-    public static final String COL_CUR_WARN_TYPE = "CUR_WARN_TYPE";
+    public static final String COL_LASER_WARN_LEVEL = "LASER_WARN_LEVEL";
 
     public static final String COL_P_ID = "P_ID";
 
@@ -120,6 +126,8 @@ public class TaskResult {
     public static final String COL_OUTPUT_PATH = "OUTPUT_PATH";
 
     public static final String COL_SATELLITE_ID = "SATELLITE_ID";
+
+    public static final String COL_UPDATE_DATE = "UPDATE_DATE";
 
     public static final String COL_ORDER = "ORDER";
 
