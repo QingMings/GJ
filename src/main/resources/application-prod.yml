@@ -20,7 +20,7 @@ spring:
       driver-class-name: com.oscar.Driver
       #      url: jdbc:oscar://192.168.1.14:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
       url: jdbc:oscar://192.168.31.213:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
-      #      url: jdbc:oscar://192.168.1.7:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
+#      url: jdbc:oscar://192.168.1.9:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
       #      url: jdbc:oscar://192.168.0.103:2003/OSRDB?serverTimezone=UTC&useSSL=FALSE
       #      username: SYSDBA
       username: DSUSER
@@ -58,7 +58,7 @@ spring:
     password: hzgj123456
     #    host: 192.168.43.244
     host: 192.168.31.213
-    #    host: 192.168.1.7
+#    host: 192.168.1.9
     port: 5672
     virtual-host: hzgj
     listener:
@@ -87,14 +87,26 @@ pagehelper:
 
 # v3版本
 pyScriptV3:
-  pyV3WorkDir: warningProgram/core-v3/
+#  pyV3WorkDir: warningProgram/core-v4/
+  pyV3WorkDir: E:/1A_2022_liangpnghui/GJ/GJ/warningProgram/core-v4/
   path: GJXXCL.py
   manualOrder:
-    savePath: warningProgram/historyOrderJson   # 手动运行订单
+#    savePath: warningProgram/historyOrderJson   # 手动运行订单
+    savePath: E:/1A_2022_liangpnghui/GJ/GJ/warningProgram/historyOrderJson   # 手动运行订单
+
     createDirByDay: true                           # 是否按天分文件夹  如果是，则 savePath = warningProgram/historyRunParam/2022-08-01 这种
     createDirByTask: true # 是否按任务分文件夹  如果是  则savePath = warningProgram/historyRunParam/任务xx 这种，如果按天也开了，savePath=warningProgram/historyRunParam/2022-08-01/任务xx 这种
-  taskDiskRoot: "E:\\1A_2022_liangpnghui\\GJ\\GJ\\warningProgram\\core-v3\\DiskArray"
-
+  taskDiskRoot: E:/1A_2022_liangpnghui/GJ/GJ/warningProgram/core-v4/DiskArray
+  taskParam:
+    path: config/defaultParam.json
+  xmlPushQueue:
+    xml_exchange: gj_xml_exchange
+    xml_queue:  gj_xml_queue
+    xml_routeKey: gj_xml_routeKey
+  warnReportQueue:
+    warn_exchange: gj_warn_exchange
+    warn_queue: gj_warn_queue
+    warn_routeKey:  gj_routeKey
 #!!!==加上参数u让脚本实时输出==!!!
 pyCmd:
   paramV3_list: python3,-u,${pyScriptV3.path}

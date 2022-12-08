@@ -1,54 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yhl.gj.mapper.TaskResultMapper">
-    <resultMap id="BaseResultMap" type="com.yhl.gj.model.TaskResult">
-        <!--@mbg.generated-->
-        <!--@Table HZGJ.GJ_TASK_RESULT-->
-        <id column="ID" jdbcType="BIGINT" property="id"/>
-        <result column="ORDER_ID" jdbcType="VARCHAR" property="orderId"/>
-        <result column="TASK_STATUS" jdbcType="VARCHAR" property="taskStatus"/>
-        <result column="SCAN_INTERVAL" jdbcType="BIGINT" property="scanInterval"/>
-        <result column="ORBIT_WARN_LEVEL" jdbcType="INTEGER" property="orbitWarnLevel"/>
-        <result column="LASER_WARN_LEVEL" jdbcType="INTEGER" property="laserWarnLevel"/>
-        <result column="P_ID" jdbcType="BIGINT" property="pId"/>
-        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
-        <result column="WORK_PATH" jdbcType="VARCHAR" property="workPath"/>
-        <result column="OUTPUT_PATH" jdbcType="VARCHAR" property="outputPath"/>
-        <result column="SATELLITE_ID" jdbcType="VARCHAR" property="satelliteId"/>
-        <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate"/>
-    </resultMap>
-    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yhl.gj.model.TaskResult">
-        <!--@mbg.generated-->
-        <!--@Table HZGJ.GJ_TASK_RESULT-->
-        <result column="ORDER" jdbcType="CLOB" property="order"/>
-        <result column="STRATEGY" jdbcType="CLOB" property="strategy"/>
-        <result column="CHART" jdbcType="CLOB" property="chart"/>
-    </resultMap>
-    <sql id="Base_Column_List">
-        <!--@mbg.generated-->
-        ID,
-        ORDER_ID,
-        TASK_STATUS,
-        SCAN_INTERVAL,
-        ORBIT_WARN_LEVEL,
-        LASER_WARN_LEVEL,
-        P_ID,
-        CREATE_DATE,
-        WORK_PATH,
-        OUTPUT_PATH,
-        SATELLITE_ID,
-        UPDATE_DATE
-    </sql>
-    <sql id="Blob_Column_List">
-        <!--@mbg.generated-->
-        "ORDER",
-        STRATEGY,
-        CHART
-    </sql>
+  <resultMap id="BaseResultMap" type="com.yhl.gj.model.TaskResult">
+    <!--@mbg.generated-->
+    <!--@Table HZGJ.GJ_TASK_RESULT-->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="ORDER_ID" jdbcType="VARCHAR" property="orderId" />
+    <result column="TASK_STATUS" jdbcType="VARCHAR" property="taskStatus" />
+    <result column="SCAN_INTERVAL" jdbcType="BIGINT" property="scanInterval" />
+    <result column="ORBIT_WARN_LEVEL" jdbcType="INTEGER" property="orbitWarnLevel" />
+    <result column="LASER_WARN_LEVEL" jdbcType="INTEGER" property="laserWarnLevel" />
+    <result column="P_ID" jdbcType="BIGINT" property="pId" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="WORK_PATH" jdbcType="VARCHAR" property="workPath" />
+    <result column="OUTPUT_PATH" jdbcType="VARCHAR" property="outputPath" />
+    <result column="SATELLITE_ID" jdbcType="VARCHAR" property="satelliteId" />
+    <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yhl.gj.model.TaskResult">
+    <!--@mbg.generated-->
+    <!--@Table HZGJ.GJ_TASK_RESULT-->
+    <result column="ORDER" jdbcType="CLOB" property="order" />
+    <result column="STRATEGY" jdbcType="CLOB" property="strategy" />
+    <result column="CHART" jdbcType="CLOB" property="chart" />
+    <result column="ALARMS" jdbcType="CLOB" property="alarms" />
+    <result column="PATH_GBCL_XML" jdbcType="CLOB" property="pathGbclXml" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    ID, ORDER_ID, TASK_STATUS, SCAN_INTERVAL, ORBIT_WARN_LEVEL, LASER_WARN_LEVEL, P_ID, 
+    CREATE_DATE, WORK_PATH, OUTPUT_PATH, SATELLITE_ID, UPDATE_DATE
+  </sql>
+  <sql id="Blob_Column_List">
+    <!--@mbg.generated-->
+    "ORDER", STRATEGY, CHART, ALARMS, PATH_GBCL_XML
+  </sql>
 
     <select id="queryTaskResultByCondition" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />,STRATEGY
         from HZGJ.GJ_TASK_RESULT GT
         <where>
             <if test="param.startTime != null">
@@ -64,11 +54,11 @@
             </if>
             <if test="param.laserWarnLevel != null  and param.laserWarnLevel.size() &gt; 0">
                 and  (<foreach collection="param.laserWarnLevel" index="index" item="item" separator="or">
-                GT.ORBIT_WARN_LEVEL = #{item,jdbcType=VARCHAR}
+                GT.LASER_WARN_LEVEL = #{item,jdbcType=VARCHAR}
             </foreach>)
             </if>
             <if test="param.satellites != null  and param.satellites.size() &gt; 0">
-                and GT.ORDER_ID IN
+                and GT.SATELLITE_ID IN
                 <foreach close=")" collection="param.satellites" item="item" open="(" separator=",">
                     #{item}
                 </foreach>
@@ -82,12 +72,12 @@
                         and GT.SCAN_INTERVAL = 0
                     </when>
                     <otherwise>
-                        and GT.SCAN_INTERVAL > 0
+                        and GT.SCAN_INTERVAL &gt; 0
                     </otherwise>
                 </choose>
             </if>
-            <if test="param.tasName != null  and param.tasName != ''">
-                and GT.ORDER_ID like '%'||#{param.tasName}||'%'
+            <if test="param.taskName != null  and param.taskName != ''">
+                and GT.ORDER_ID like '%'||#{param.taskName}||'%'
             </if>
         </where>
         order by GT.CREATE_DATE desc
@@ -95,8 +85,8 @@
 
     <select id="getOneWithBlobs" resultMap="ResultMapWithBLOBs">
         select
-        <include refid="Base_Column_List"/>,
-        <include refid="Blob_Column_List"/>
+        <include refid="Base_Column_List" />,
+        <include refid="Blob_Column_List" />
         from HZGJ.GJ_TASK_RESULT GT
         <where>
             GT.ID = #{id}
@@ -107,5 +97,21 @@
         select distinct SATELLITE_ID
         from HZGJ.GJ_TASK_RESULT GJ
         where SATELLITE_ID is not null
+    </select>
+
+  <select id="getMovesById" resultType="java.lang.String">
+      select    GJ.STRATEGY
+          from HZGJ.GJ_TASK_RESULT GJ
+      <where>
+          GJ.ID = #{id}
+      </where>
+    </select>
+
+  <select id="getPathGbclXml" resultType="java.lang.String">
+      select  GJ.PATH_GBCL_XML
+      from HZGJ.GJ_TASK_RESULT GJ
+      <where>
+          GJ.ID = #{id}
+      </where>
     </select>
 </mapper>

@@ -1,0 +1,18 @@
+{
+  "path_leap": "./DiskArray/ROOT/AUXDATA/EOP/EOP.txt111",
+  "path_eop": "./DiskArray/ROOT/AUXDATA/EOP/EOP.txt111",
+  "path_swd": "./DiskArray/ROOT/AUXDATA/SRF/SRF.DAT.txt111",
+  "time_start_utc": "2020-11-28 00:00:00",
+  "time_span_days": 7,
+  "time_end_utc": "2020-12-05 00:00:00",
+  "thresholds": {
+    "gate_etca": 4.0,
+    "gate_dSTW": [
+      20000.0,
+      50000.0,
+      50000.0
+    ],
+    "gate_dr": 50000.0,
+    "gate_pc": 0.0001
+  }
+}

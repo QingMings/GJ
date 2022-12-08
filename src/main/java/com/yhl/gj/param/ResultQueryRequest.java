@@ -43,5 +43,5 @@ public class ResultQueryRequest extends BaseParam {
      */
     private String taskType;
 
-    private String tasName;
+    private String taskName;
 }

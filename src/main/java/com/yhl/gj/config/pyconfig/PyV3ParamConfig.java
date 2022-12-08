@@ -12,4 +12,11 @@ public class PyV3ParamConfig {
     public List<String> getCmdV3() {
         return cmdV3;
     }
+
+    @Value("${pyScriptV3.taskParam.path}")
+    private String  defaultParamPath;
+
+    public String getDefaultParamPath() {
+        return defaultParamPath;
+    }
 }

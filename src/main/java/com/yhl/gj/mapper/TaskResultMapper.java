@@ -11,4 +11,8 @@ public interface TaskResultMapper extends BaseMapper<TaskResult> {
     TaskResult getOneWithBlobs(@Param("id") Long id);
 
     List<String> getSatellites();
+
+    String getMovesById(@Param("id") Long id);
+
+    String getPathGbclXml(@Param("id") Long id);
 }

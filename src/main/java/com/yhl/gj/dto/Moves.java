@@ -21,6 +21,8 @@ public class Moves {
     public static class MovesDTO {
         @JSONField(name = "vecdv_t")
         private List<Double> vecdvT;
+        @JSONField(name = "vecdv_xyz")
+        private List<Double> vecdvXyz;
         @JSONField(name = "utc")
         private String utc;
         @JSONField(name = "vecv_minus")

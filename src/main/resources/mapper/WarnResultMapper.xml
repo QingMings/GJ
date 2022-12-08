@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhl.gj.mapper.WarnResultMapper">
+  <resultMap id="BaseResultMap" type="com.yhl.gj.model.WarnResult">
+    <!--@mbg.generated-->
+    <!--@Table HZGJ.GJ_WARN_RESULT-->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="TASK_ID" jdbcType="BIGINT" property="taskId" />
+    <result column="SATELLITE_ID" jdbcType="VARCHAR" property="satelliteId" />
+    <result column="ORDER_ID" jdbcType="VARCHAR" property="orderId" />
+    <result column="WARN_TYPE" jdbcType="VARCHAR" property="warnType" />
+    <result column="WARN_LEVEL" jdbcType="INTEGER" property="warnLevel" />
+    <result column="WARN_TIME_UTC" jdbcType="TIMESTAMP" property="warnTimeUtc" />
+    <result column="WARN_INFO" jdbcType="VARCHAR" property="warnInfo" />
+    <result column="TARGET_ID" jdbcType="VARCHAR" property="targetId" />
+    <result column="WARN_STATUS" jdbcType="INTEGER" property="warnStatus" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    ID, TASK_ID, SATELLITE_ID, ORDER_ID, WARN_TYPE, WARN_LEVEL, WARN_TIME_UTC, WARN_INFO, 
+    TARGET_ID, WARN_STATUS
+  </sql>
+</mapper>

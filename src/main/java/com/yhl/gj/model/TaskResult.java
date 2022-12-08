@@ -105,6 +105,18 @@ public class TaskResult {
     @TableField(value = "CHART")
     private String chart;
 
+    /**
+     * 告警数据列表
+     */
+    @TableField(value = "ALARMS")
+    private String alarms;
+
+    /**
+     * XML数据
+     */
+    @TableField(value = "PATH_GBCL_XML")
+    private String pathGbclXml;
+
     public static final String COL_ID = "ID";
 
     public static final String COL_ORDER_ID = "ORDER_ID";
@@ -134,4 +146,8 @@ public class TaskResult {
     public static final String COL_STRATEGY = "STRATEGY";
 
     public static final String COL_CHART = "CHART";
+
+    public static final String COL_ALARMS = "ALARMS";
+
+    public static final String COL_PATH_GBCL_XML = "PATH_GBCL_XML";
 }

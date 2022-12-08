@@ -23,7 +23,7 @@
         <commons-io.version>2.11.0</commons-io.version>
         <druid-spring-boot-starter.version>1.2.6</druid-spring-boot-starter.version>
         <mybatis-plus-boot-starter.version>3.5.2</mybatis-plus-boot-starter.version>
-        <pagehelper-spring-boot-starter.version>1.4.3</pagehelper-spring-boot-starter.version>
+        <pagehelper-spring-boot-starter.version>1.4.6</pagehelper-spring-boot-starter.version>
     </properties>
     <dependencies>
         <!--        <dependency>-->

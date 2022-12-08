@@ -34,10 +34,10 @@ public class CallWarningV3Task extends Thread {
             proc = pb.start();
             String encoding = SystemUtil.getOsInfo().isWindows() ? "gbk" : "utf-8";
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(), encoding));
-            List<String> pylogs = new ArrayList<>();
+
             String line;
             while ((line = in.readLine()) != null) {
-                pylogs.add(line);
+               log.info(line);
             }
 
             in.close();

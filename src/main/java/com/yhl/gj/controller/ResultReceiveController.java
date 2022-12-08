@@ -1,16 +1,26 @@
 package com.yhl.gj.controller;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.yhl.gj.commons.base.Response;
 import com.yhl.gj.dto.OrderDTO;
+import com.yhl.gj.param.HistoryWarnResultRequest;
 import com.yhl.gj.param.ResultQueryRequest;
 import com.yhl.gj.param.TaskDirRequest;
+import com.yhl.gj.param.WarnResultRequest;
 import com.yhl.gj.service.ResultReceiveService;
+import com.yhl.gj.service.WarnResultService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.sql.Struct;
 
 /**
  * 2022-11-08  新的变更单独放出来了
@@ -44,6 +54,11 @@ public class ResultReceiveController {
         return resultReceiveService.manualExecuteTask(orderRequest);
     }
 
+    @GetMapping("/genOrderName")
+    public Response genOrderName(){
+
+        return Response.buildSucc(StrUtil.concat(true,"M",DateUtil.format(DateUtil.date(),"yyyyMMddHHmmssSSSSSS"))) ;
+    }
     /**
      * 任务列表
      * @param request
@@ -64,7 +79,11 @@ public class ResultReceiveController {
         return resultReceiveService.getOne(id);
     }
 
-    /**
+    @GetMapping("/getMoves")
+    public Response getMovesToFile(@RequestParam("id" )Long id,@RequestParam("type") String type){
+        Assert.isTrue(StrUtil.equals("txt",type)||StrUtil.equals("csv",type),"type = [txt、csv]");
+        return  resultReceiveService.getMovesToFiles(id,type);
+    }    /**
      * 文件夹列表
      * @param request
      * @return
@@ -84,6 +103,11 @@ public class ResultReceiveController {
         return resultReceiveService.getSatellites();
     }
 
+
+    @GetMapping("/defaultParam")
+    public Response getDefaultParam(){
+        return resultReceiveService.getDefaultParam();
+    }
     /**
      * 创建新任务
      * @return
@@ -92,4 +116,24 @@ public class ResultReceiveController {
 //    public Response  createNewTask(){
 //
 //    }
+
+    @PostMapping("/sendXmlToMq")
+    public Response  sendXmlToMq(@RequestParam Long id){
+       return  resultReceiveService.sendXmlToMq(id);
+    }
+
+    @Resource
+    private WarnResultService warnResultService;
+    @PostMapping("/warnResultQuery")
+    public Response  warnResultQuery(@RequestBody @Valid WarnResultRequest request){
+          return  warnResultService.warnResultQuery(request);
+    }
+    @PostMapping("/historyWarnResultQuery")
+    public Response historyWarnResultQuery(@RequestBody @Valid HistoryWarnResultRequest request){
+        return warnResultService.historyWarnResultQuery(request);
+    }
+    @PostMapping("/markedWarnResultToHistory/{warnId}")
+    public Response markedWarnResultToHistory(@PathVariable("warnId") Long warnId){
+        return warnResultService.markedWarnResultToHistory(warnId);
+    }
 }

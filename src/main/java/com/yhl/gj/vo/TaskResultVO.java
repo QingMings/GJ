@@ -21,11 +21,13 @@ public class TaskResultVO {
     private String curWarnType;
     private Long pId;
     private Date createDate;
+    private Date updateDate;
     private String workPath;
     private String outputPath;
     private String satelliteId;
     private OrderDTO order;
     private StrategyDTO strategy;
     private JSONObject chart;
+    private JSONObject alarms;
 
 }

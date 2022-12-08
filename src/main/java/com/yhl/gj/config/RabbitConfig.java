@@ -10,6 +10,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.ContentTypeDelegatingMessageConverter;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,6 +24,45 @@ public class RabbitConfig {
     @Resource
     private ConnectionFactory connectionFactory;
 
+    @Value("${pyScriptV3.xmlPushQueue.xml_exchange}")
+    private String gjXmlExchange;
+    @Value("${pyScriptV3.xmlPushQueue.xml_queue}")
+    private String gjXmlQueue;
+    @Value("${pyScriptV3.xmlPushQueue.xml_routeKey}")
+    private String gjXmlRouteKey;
+
+
+    @Value("${pyScriptV3.warnReportQueue.warn_exchange}")
+    private String gjWarnExchange;
+    @Value("${pyScriptV3.warnReportQueue.warn_queue}")
+    private String gjWarnQueue;
+    @Value("${pyScriptV3.warnReportQueue.warn_routeKey}")
+    private String gjWarnRouteKey;
+
+
+    public String getGjWarnExchange() {
+        return gjWarnExchange;
+    }
+
+    public String getGjWarnQueue() {
+        return gjWarnQueue;
+    }
+
+    public String getGjWarnRouteKey() {
+        return gjWarnRouteKey;
+    }
+
+    public String getGjXmlExchange() {
+        return gjXmlExchange;
+    }
+
+    public String getGjXmlQueue() {
+        return gjXmlQueue;
+    }
+
+    public String getGjXmlRouteKey() {
+        return gjXmlRouteKey;
+    }
 
     /**
      * 定制化amqp模版
@@ -83,20 +123,34 @@ public class RabbitConfig {
 
     @Bean
     public DirectExchange warnReportExchange() {
-        return (DirectExchange) ExchangeBuilder.directExchange(QueuesConstants.WARN_REPORT_EXCHANGE).durable(true).build();
+        return (DirectExchange) ExchangeBuilder.directExchange(gjWarnExchange).durable(true).build();
     }
 
     @Bean
     public Queue warnReportQueue() {
-        return QueueBuilder.durable(QueuesConstants.WARN_REPORT_QUEUE).build();
+        return QueueBuilder.durable(gjWarnQueue).build();
     }
 
     @Bean
     public Binding warnReportBinding() {
-        return BindingBuilder.bind(warnReportQueue()).to(warnReportExchange()).with(QueuesConstants.WARN_REPORT_ROUTE_KEY);
+        return BindingBuilder.bind(warnReportQueue()).to(warnReportExchange()).with(gjWarnRouteKey);
     }
 
 
+    @Bean
+    public DirectExchange gjXmlExchange() {
+        return (DirectExchange) ExchangeBuilder.directExchange(gjXmlExchange).durable(true).build();
+    }
+
+    @Bean
+    public Queue gjXmlQueue() {
+        return QueueBuilder.durable(gjXmlQueue).build();
+    }
+
+    @Bean
+    public Binding gjXmlBinding() {
+        return BindingBuilder.bind(gjXmlQueue()).to(gjXmlExchange()).with(gjXmlRouteKey);
+    }
 
 
 }

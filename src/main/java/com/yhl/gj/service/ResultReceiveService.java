@@ -21,4 +21,10 @@ public interface ResultReceiveService {
     Response getOne(Long id);
 
     Response getSatellites();
+
+    Response getDefaultParam() ;
+
+    Response getMovesToFiles(Long id, String type);
+
+    Response sendXmlToMq(Long id);
 }
