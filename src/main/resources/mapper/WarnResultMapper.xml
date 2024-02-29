@@ -14,10 +14,11 @@
     <result column="WARN_INFO" jdbcType="VARCHAR" property="warnInfo" />
     <result column="TARGET_ID" jdbcType="VARCHAR" property="targetId" />
     <result column="WARN_STATUS" jdbcType="INTEGER" property="warnStatus" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     ID, TASK_ID, SATELLITE_ID, ORDER_ID, WARN_TYPE, WARN_LEVEL, WARN_TIME_UTC, WARN_INFO, 
-    TARGET_ID, WARN_STATUS
+    TARGET_ID, WARN_STATUS, CREATE_TIME
   </sql>
 </mapper>

@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yhl.gj.param.HistoryWarnResultRequest;
 import com.yhl.gj.param.WarnResultRequest;
 
-public interface WarnResultService extends IService<WarnResult>{
+public interface WarnResultService extends IService<WarnResult> {
 
 
     Response warnResultQuery(WarnResultRequest request);
@@ -14,4 +14,7 @@ public interface WarnResultService extends IService<WarnResult>{
     Response historyWarnResultQuery(HistoryWarnResultRequest request);
 
     Response markedWarnResultToHistory(Long warnId);
+
+    Response markedAllWarnResultToHistory();
 }
+

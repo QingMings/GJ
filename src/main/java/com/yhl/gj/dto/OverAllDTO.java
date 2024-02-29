@@ -17,4 +17,14 @@ public class OverAllDTO {
     private String detail;
     @JSONField(name = "type")
     private String type;
+    @JSONField(name="dataUrl")
+    private String detailUrl;
+    @JSONField(name = "sateName")
+    private String sateName;
+    @JSONField(name = "sr_xyz")
+    private Double[] sr_xyz;
+    @JSONField(name = "pls")
+    private PlsDto pls;
+    @JSONField(name = "ctn")
+    private  CtnDto ctn;
 }

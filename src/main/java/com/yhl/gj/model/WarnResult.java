@@ -37,7 +37,7 @@ public class WarnResult {
     private String orderId;
 
     /**
-     * 告警类型 laser 
+     * 告警类型 laser
      */
     @TableField(value = "WARN_TYPE")
     private String warnType;
@@ -72,6 +72,12 @@ public class WarnResult {
     @TableField(value = "WARN_STATUS")
     private Integer warnStatus;
 
+    /**
+     * 创建时间
+     */
+    @TableField(value = "CREATE_TIME")
+    private Date createTime;
+
     public static final String COL_ID = "ID";
 
     public static final String COL_TASK_ID = "TASK_ID";
@@ -91,4 +97,6 @@ public class WarnResult {
     public static final String COL_TARGET_ID = "TARGET_ID";
 
     public static final String COL_WARN_STATUS = "WARN_STATUS";
+
+    public static final String COL_CREATE_TIME = "CREATE_TIME";
 }

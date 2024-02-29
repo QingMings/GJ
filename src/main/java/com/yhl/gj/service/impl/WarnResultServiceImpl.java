@@ -22,9 +22,9 @@ public class WarnResultServiceImpl extends ServiceImpl<WarnResultMapper, WarnRes
 
     @Override
     public Response warnResultQuery(WarnResultRequest request) {
-        List<WarnResult> warnResults = this.lambdaQuery().in(WarnResult::getWarnLevel, request.getWarnLevels())
+        List<WarnResult> warnResults = this.lambdaQuery().in(CollectionUtils.isNotEmpty(request.getWarnLevels()), WarnResult::getWarnLevel, request.getWarnLevels())
                 .eq(WarnResult::getWarnStatus, 0)
-                .orderByDesc(WarnResult::getWarnTimeUtc)
+                .orderByDesc(WarnResult::getCreateTime)
                 .list();
         return Response.buildSucc(warnResults);
     }
@@ -36,8 +36,8 @@ public class WarnResultServiceImpl extends ServiceImpl<WarnResultMapper, WarnRes
         List<WarnResult> warnResults = this.lambdaQuery().eq(WarnResult::getWarnStatus, 1)
                 .like(StrUtil.isNotBlank(request.getTaskName()), WarnResult::getOrderId, request.getTaskName())
                 .in(CollectionUtils.isNotEmpty(request.getSatelliteNames()), WarnResult::getSatelliteId, request.getSatelliteNames())
-                .gt(ObjectUtil.isNotNull(request.getStartTime()), WarnResult::getWarnTimeUtc, request.getStartTime())
-                .lt(ObjectUtil.isNotNull(request.getEndTime()), WarnResult::getWarnTimeUtc, request.getEndTime())
+                .gt(ObjectUtil.isNotNull(request.getStartTime()), WarnResult::getCreateTime, request.getStartTime())
+                .lt(ObjectUtil.isNotNull(request.getEndTime()), WarnResult::getCreateTime, request.getEndTime())
                 .and(CollectionUtils.isNotEmpty(request.getLaserWarnLevels()) || CollectionUtils.isNotEmpty(request.getOrbitWarnLevels()), i ->
                         i.and(CollectionUtils.isNotEmpty(request.getLaserWarnLevels())
                                         , t -> t.eq(WarnResult::getWarnType, "laser")
@@ -45,7 +45,7 @@ public class WarnResultServiceImpl extends ServiceImpl<WarnResultMapper, WarnRes
                                 .or(CollectionUtils.isNotEmpty(request.getOrbitWarnLevels())
                                         , t2 -> t2.eq(WarnResult::getWarnType, "orbit")
                                                 .in(WarnResult::getWarnLevel, request.getOrbitWarnLevels())))
-                .orderByDesc(WarnResult::getWarnTimeUtc)
+                .orderByDesc(WarnResult::getCreateTime)
                 .list();
 
 
@@ -59,4 +59,12 @@ public class WarnResultServiceImpl extends ServiceImpl<WarnResultMapper, WarnRes
                 .eq(WarnResult::getId, warnId).update();
         return Response.buildSucc(update);
     }
+
+    @Override
+    public Response markedAllWarnResultToHistory() {
+        boolean update = this.lambdaUpdate().set(WarnResult::getWarnStatus, 1)
+                .eq(WarnResult::getWarnStatus, 0).update();
+        return Response.buildSucc(update);
+    }
 }
+

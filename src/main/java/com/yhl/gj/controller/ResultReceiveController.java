@@ -136,4 +136,9 @@ public class ResultReceiveController {
     public Response markedWarnResultToHistory(@PathVariable("warnId") Long warnId){
         return warnResultService.markedWarnResultToHistory(warnId);
     }
+
+    @PostMapping("markedAllWarnResultToHistory")
+    public Response markedAllWarnResultToHistory(){
+        return  warnResultService.markedAllWarnResultToHistory();
+    }
 }

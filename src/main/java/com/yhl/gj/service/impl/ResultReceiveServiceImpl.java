@@ -23,6 +23,7 @@ import com.yhl.gj.service.ResultReceiveService;
 import com.yhl.gj.service.TaskResultService;
 import com.yhl.gj.service.WarnResultService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.core.io.FileUrlResource;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
@@ -35,7 +36,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -179,6 +182,7 @@ public class ResultReceiveServiceImpl implements ResultReceiveService {
         updatePidAndOrderId(taskResult);
         taskResultService.saveOrUpdate(taskResult);
         List<OverAllDTO> summary = receiveData.getJSONArray("summary").toJavaList(OverAllDTO.class);
+        setDetailUrl(summary,taskResult);
         // 发送warn到 mq
         sendSummaryToMq(summary);
         // 保存 warnResults
@@ -186,6 +190,11 @@ public class ResultReceiveServiceImpl implements ResultReceiveService {
         return taskResult;
     }
 
+    private void  setDetailUrl(List<OverAllDTO> summary,TaskResult taskResult ){
+        summary.stream().forEach(t-> {
+            t.setDetailUrl(StrUtil.format("gj/index.html#/editgj/editgj?id={}&type=gj",taskResult.getId()));
+        });
+    }
     private void saveWarnResultBatch(TaskResult taskResult, List<OverAllDTO> summary) {
         List<WarnResult> warnResults = Collections.unmodifiableList(summary.stream().map(overAllDTO -> {
             WarnResult warnResult = new WarnResult();
@@ -197,12 +206,14 @@ public class ResultReceiveServiceImpl implements ResultReceiveService {
             warnResult.setTargetId(overAllDTO.getTargetId());
             warnResult.setWarnStatus(overAllDTO.getLevel() > 0 ? 0 : 1);
             warnResult.setWarnType(overAllDTO.getType());
+            warnResult.setCreateTime(DateUtil.date());
             if (StrUtil.isNotEmpty(overAllDTO.getUtc())) {
                 warnResult.setWarnTimeUtc(DateUtil.parse(overAllDTO.getUtc()));
             }
             return warnResult;
         }).collect(Collectors.toList()));
         warnResultService.saveBatch(warnResults);
+        System.out.println();
     }
 
     private String getPathGbclXml(JSONObject receiveData) {
@@ -339,7 +350,11 @@ public class ResultReceiveServiceImpl implements ResultReceiveService {
                         output.put("C", "");
                     }
                     output.put("序号", i);
-                    output.put("UTC时间", movesDTO.getUtc());
+                    output.put("UTC时间", StrUtil.isNotEmpty(movesDTO.getUtc())? movesDTO.getUtc().replace(" ","T"):movesDTO.getUtc());
+                    Date bjTime = DateUtils.addHours(DateUtil.parse(movesDTO.getUtc()), 8);
+
+                    String bjTimeStr = DateUtil.format(bjTime, "yyyy-MM-dd HH:mm:ss.SSSS").replace(" ", "T");
+                    output.put("北京时间",bjTimeStr);
                     output.put("速度增量dVx[m/s]", movesDTO.getVecdvXyz().get(0));
                     output.put("速度增量dVy[m/s]", movesDTO.getVecdvXyz().get(1));
                     output.put("速度增量dVz[m/s]", movesDTO.getVecdvXyz().get(2));
